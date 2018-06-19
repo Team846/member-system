@@ -1,0 +1,16 @@
+#header {
+    background-color: white;
+    height: 0;
+    left: 0;
+    overflow: hidden;
+    padding: 8px 50px;
+    position: fixed;
+    width: 100vw;
+    top: 0;
+    z-index: 2;
+}
+
+header#header.collapsed {
+    height: 0;
+    padding: 0 50px;
+}

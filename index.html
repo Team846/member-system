@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="icon" href="assets/images/favicon.ico">
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+        <link rel="stylesheet" href="assets/css/header.css">
+        <link rel="stylesheet" href="assets/css/home.css">
+        <link rel="stylesheet" href="assets/css/index.css">
+        <link rel="stylesheet" href="assets/css/page.css">
+        <title>Lynbrook Robotics - The Funky Monkeys</title>
+    </head>
+    <body>
+        <header class="z-depth-1" id="header">
+            <img src="assets/images/favicon.ico" alt="Funky Monkey">
+        </header>
+        <div class="page" id="home">
+            <!--This is flexboxed, so by putting the headings in a div, we can avoid extra styling-->
+            <div>
+                <h1 class="white-text">Funky Monkeys</h1>
+                <h2 class="white-text">Lynbrook Robotics</h2>
+                <button id="call-to-action">Join</button>
+            </div>
+        </div>
+        <div class="page unloaded" id="dashboard">
+            <h4>Please wait while your dashboard loads...</h4>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-firestore.js"></script>
+        <script>
+            // TODO: Replace with production database on Team 846 Google Account
+            const config = {
+                apiKey: "AIzaSyAD7fMnFLhF_sxY6ZKl8KMrg2tnQGdI0dI",
+                authDomain: "funky-monkey-6f6f5.firebaseapp.com",
+                databaseURL: "https://funky-monkey-6f6f5.firebaseio.com",
+                projectId: "funky-monkey-6f6f5",
+                storageBucket: "",
+                messagingSenderId: "183313415467"
+            };
+            firebase.initializeApp(config);
+        </script>
+        <script src="assets/js/index.js"></script>
+        <script src="assets/js/home.js"></script>
+    </body>
+</html>     
