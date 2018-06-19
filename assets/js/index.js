@@ -13,11 +13,17 @@ function resetInterface() {
     const dashboard = document.getElementById('dashboard');
     dashboard.classList.add('collapsed');
     dashboard.innerHTML = "<h4>Please wait while your dashboard loads...</h4>";
+
+    document.getElementById('profile').src = 'https://placehold.it/64x64';
+    document.getElementById('name').textContent = 'Your Name';
 }
 
 function onSignIn(user) {
     const dashboard = document.getElementById('dashboard');
     dashboard.classList.remove('collapsed');
+
+    document.getElementById('profile').src = user.photoURL;
+    document.getElementById('name').textContent = user.displayName;
 
     firebase.firestore().doc(`members/${user.uid}`).onSnapshot(snapshot => {
         const data = snapshot.data() || {
