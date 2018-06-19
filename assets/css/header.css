@@ -1,6 +1,6 @@
 #header {
     background-color: white;
-    height: 0;
+    height: 80px;
     left: 0;
     overflow: hidden;
     padding: 8px 50px;
@@ -10,7 +10,31 @@
     z-index: 2;
 }
 
-header#header.collapsed {
-    height: 0;
-    padding: 0 50px;
+#header > img {
+    vertical-align: middle;
+}
+
+#header > img:hover {
+    cursor: pointer;
+    transform: rotateZ(360deg);
+}
+
+#header h1 {
+    display: inline;
+    font-size: 2.5em;
+    margin: 0 0 0 16px;
+}
+
+#header > #account-menu {
+    margin-left: auto;
+}
+
+#header > #account-menu > img {
+    border-radius: 50%;
+    height: 48px;
+}
+
+#header > #account-menu > h4 {
+    font-size: 1em;
+    margin: 0 0 0 16px;
 }

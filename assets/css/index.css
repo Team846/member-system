@@ -16,3 +16,7 @@ body {
 .unloaded {
     text-align: center;
 }
+
+.inline {
+    display: inline;
+}

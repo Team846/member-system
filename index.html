@@ -14,15 +14,20 @@
         <title>Lynbrook Robotics - The Funky Monkeys</title>
     </head>
     <body>
-        <header class="z-depth-1" id="header">
+        <header class="z-depth-1 valign-wrapper" id="header">
             <img src="assets/images/favicon.ico" alt="Funky Monkey">
+            <h1>Funky Monkeys</h1>
+            <div class="valign-wrapper" id="account-menu">
+                <img src="https://placehold.it/64x64" alt="Profile">
+                <h4 class="inline">Your Name</h4>
+            </div>
         </header>
         <div class="page" id="home">
             <!--This is flexboxed, so by putting the headings in a div, we can avoid extra styling-->
             <div>
                 <h1 class="white-text">Funky Monkeys</h1>
                 <h2 class="white-text">Lynbrook Robotics</h2>
-                <button id="call-to-action">Join</button>
+                <button id="call-to-action">Sign In</button>
             </div>
         </div>
         <div class="page unloaded" id="dashboard">
@@ -34,17 +39,20 @@
         <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-firestore.js"></script>
         <script>
             // TODO: Replace with production database on Team 846 Google Account
-            const config = {
+            firebase.initializeApp({
                 apiKey: "AIzaSyAD7fMnFLhF_sxY6ZKl8KMrg2tnQGdI0dI",
                 authDomain: "funky-monkey-6f6f5.firebaseapp.com",
                 databaseURL: "https://funky-monkey-6f6f5.firebaseio.com",
                 projectId: "funky-monkey-6f6f5",
                 storageBucket: "",
                 messagingSenderId: "183313415467"
-            };
-            firebase.initializeApp(config);
+            });
+
+            firebase.firestore().settings({
+                timestampsInSnapshots: true
+            });
         </script>
         <script src="assets/js/index.js"></script>
         <script src="assets/js/home.js"></script>
     </body>
-</html>     
+</html>

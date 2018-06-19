@@ -10,17 +10,22 @@ function switchToPage(pageNumber) {
 }
 
 function resetInterface() {
-    document.getElementById('dashboard').innerHTML = "<h4>Please wait while your dashboard loads...</h4>";
-    document.querySelector('#dashboard').style.top = "0";
-    document.querySelector('#dashboard').style.paddingTop = "0";
-    document.getElementById('header').style.height = "0";
+    const dashboard = document.getElementById('dashboard');
+    dashboard.classList.add('collapsed');
+    dashboard.innerHTML = "<h4>Please wait while your dashboard loads...</h4>";
 }
 
 function onSignIn(user) {
-    document.querySelector('#dashboard').style.top = "80px";
-    document.querySelector('#header').style.paddingTop = "8px";
-    document.querySelector('#header').style.paddingBottom = "8px";
-    document.getElementById('header').style.height = "80px";
+    const dashboard = document.getElementById('dashboard');
+    dashboard.classList.remove('collapsed');
+
+    firebase.firestore().doc(`members/${user.uid}`).onSnapshot(snapshot => {
+        const data = snapshot.data() || {
+
+        };
+        const name = document.createElement('h4');
+        name.textContent = user.displayName;
+    });
 }
 
 /*
