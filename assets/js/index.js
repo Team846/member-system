@@ -1,53 +1,65 @@
-/**
- * Moves all <div.page> elements to the appropriate position
- * @param pageNumber The page number of the target page, 0 being the home page's number
- */
-function switchToPage(pageNumber) {
-    const pages = document.getElementsByClassName('page');
-    for (let i = 0; i < pages.length; i++) {
-        pages[i].style.left = `${(i - pageNumber) * 100}vw`;
-    }
-}
-
-function resetInterface() {
-    const dashboard = document.getElementById('dashboard');
-    dashboard.classList.add('collapsed');
-    dashboard.innerHTML = "<h4>Please wait while your dashboard loads...</h4>";
-
-    document.getElementById('profile').src = 'https://placehold.it/64x64';
-    document.getElementById('name').textContent = 'Your Name';
-}
-
-function onSignIn(user) {
-    const dashboard = document.getElementById('dashboard');
-    dashboard.classList.remove('collapsed');
-
-    document.getElementById('profile').src = user.photoURL;
-    document.getElementById('name').textContent = user.displayName;
-
-    firebase.firestore().doc(`members/${user.uid}`).onSnapshot(snapshot => {
-        const data = snapshot.data() || {
-
-        };
-        const name = document.createElement('h4');
-        name.textContent = user.displayName;
+(() => {
+    firebase.initializeApp({
+        apiKey: "AIzaSyAD7fMnFLhF_sxY6ZKl8KMrg2tnQGdI0dI",
+        authDomain: "funky-monkey-6f6f5.firebaseapp.com",
+        databaseURL: "https://funky-monkey-6f6f5.firebaseio.com",
+        projectId: "funky-monkey-6f6f5",
+        storageBucket: "funky-monkey-6f6f5.appspot.com",
+        messagingSenderId: "183313415467"
     });
-}
 
-/*
- * If the user signed out, take them to the home page
- * Otherwise, take them to the dashboard
- */
-firebase.auth().onAuthStateChanged(user => {
-    switch (user) {
-        case null:
-        case undefined:
-            switchToPage(0);
-            resetInterface();
-            break;
-        default:
-            switchToPage(1);
-            onSignIn(user);
-            break
+    firebase.firestore().settings({
+        timestampsInSnapshots: true
+    });
+
+    firebase.auth().useDeviceLanguage();
+})(); // Firebase settings
+
+(() => {
+    const $dashboard = $('#dashboard');
+    let originalDashboardHTML = null;
+
+    function onUserSignedIn(user) {
+        originalDashboardHTML = $dashboard.html();
+        $dashboard.html('<div class="progress"><div class="indeterminate"></div></div>');
+        $('.sign-in').unbind('click').bind('click', () => {
+            firebase.auth().signOut();
+        }).find('a').text('Sign Out');
     }
-});
+
+    function onUserSignedOut() {
+        $dashboard.html(originalDashboardHTML);
+        $('.sign-in').unbind('click').bind('click', () => {
+            signIn();
+        }).find('a').text('Sign In');
+    }
+
+    function signIn() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('https://www.googleapis.com/auth/user.addresses.read');
+        provider.addScope('https://www.googleapis.com/auth/user.birthday.read');
+        provider.addScope('https://www.googleapis.com/auth/user.emails.read');
+        provider.addScope('https://www.googleapis.com/auth/user.phonenumbers.read');
+        provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+        provider.addScope('https://www.googleapis.com/auth/userinfo.profile');
+        firebase.auth().signInWithPopup(provider);
+    }
+
+    firebase.auth().onAuthStateChanged(user => {
+        switch (user) {
+            case null:
+            case undefined:
+                onUserSignedOut();
+                break;
+            default:
+                onUserSignedIn(user);
+                break;
+        }
+    });
+
+    $('.sign-in').click(signIn);
+})();
+
+(() => {
+    M.Sidenav.init(document.querySelectorAll('.sidenav'));
+})();

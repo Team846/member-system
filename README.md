@@ -1,4 +1,4 @@
-# member-system
+# Member System
 
 To get started working on this repository, clone it from GitHub
 ~~~
@@ -14,7 +14,7 @@ python3 -m http.server
 
 Now, you should be able to navigate to <a>http://localhost:80</a>, and see
 the website running in your browser. The python server will automatically
-serve update files on a new request, unlike serve, or other servers.
+serve updated files on a new request, unlike serve, or other servers.
 
 From here on out, just branch out.
 ~~~
