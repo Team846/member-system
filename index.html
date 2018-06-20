@@ -14,6 +14,8 @@
         <link rel="stylesheet"
               href="assets/css/header.css">
         <link rel="stylesheet"
+              href="assets/css/page.css">
+        <link rel="stylesheet"
               href="assets/css/index.css">
         <title>Member System - Lynbrook Robotics</title>
     </head>
@@ -30,9 +32,9 @@
                 </div>
                 <div class="nav-content">
                     <ul class="tabs tabs-transparent hide-on-small-only">
-                        <li class="active tab"><a>Information</a></li>
-                        <li class="tab"><a>My Profile</a></li>
-                        <li class="tab"><a>Members</a></li>
+                        <li data-page="0" class="active sublink tab"><a>Information</a></li>
+                        <li data-page="1" class="sublink tab"><a>My Profile</a></li>
+                        <li data-page="2" class="sublink tab"><a>Members</a></li>
                         <li class="right tab sign-in"><a>Sign In</a></li>
                     </ul>
                 </div>
@@ -44,18 +46,27 @@
             <li>
                 <div class="divider"></div>
             </li>
-            <li class="hide-on-med-only"><a>Information</a></li>
-            <li class="hide-on-med-only"><a>My Profile</a></li>
-            <li class="hide-on-med-only"><a>Members</a></li>
+            <li class="hide-on-med-only sublink" data-page="0"><a>Information</a></li>
+            <li class="hide-on-med-only sublink" data-page="1"><a>My Profile</a></li>
+            <li class="hide-on-med-only sublink" data-page="2"><a>Members</a></li>
             <li class="hide-on-med-only sign-in"><a>Sign In</a></li>
         </ul>
-        <div class="container" id="dashboard" style="justify-content: center">
-            <h2>Lynbrook Robotics Member Dashboard</h2>
-            <p>Welcome to Lynbrook Robotics! Get started by <span class="sign-in" style="text-decoration: underline">signing in</span>.
-                Fill out all fields you can in your profile, so that other members are able to contact you. As you
-                gain higher positions in the team, you will be able to do more and more with the dashboard.</p>
-            <img class="responsive-img" src="assets/images/SVR2017.jpg"
-                 alt="Team Picture from Silicon Valley Regional 2017">
+        <div style="position: relative">
+            <div class="page information-container">
+                <div class="container" id="information" style="justify-content: center">
+                    <h2>Lynbrook Robotics Member Dashboard</h2>
+                    <p>Welcome to Lynbrook Robotics! Get started by <span class="sign-in"
+                                                                          style="text-decoration: underline">signing in</span>.
+                        Fill out all fields you can in your profile, so that other members are able to contact you. As
+                        you
+                        gain higher positions in the team, you will be able to do more and more with the dashboard.</p>
+                    <img class="responsive-img" src="assets/images/SVR2017.jpg"
+                         alt="Team Picture from Silicon Valley Regional 2017">
+                </div>
+            </div>
+            <div class="page dashboard-container">
+                <div class="container" id="dashboard"></div>
+            </div>
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
         <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-app.js"></script>
