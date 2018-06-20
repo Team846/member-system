@@ -17,10 +17,9 @@
 
 (() => {
     const $dashboard = $('#dashboard');
-    let originalDashboardHTML = null;
+    let originalDashboardHTML = $dashboard.html();
 
     function onUserSignedIn(user) {
-        originalDashboardHTML = $dashboard.html();
         $dashboard.html('<div class="progress"><div class="indeterminate"></div></div>');
         $('.sign-in').unbind('click').bind('click', () => {
             firebase.auth().signOut();
