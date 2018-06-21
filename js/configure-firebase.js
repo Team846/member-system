@@ -15,12 +15,12 @@ const configurations = {
         messagingSenderId: "1042082599999"
     },
     production: {
-        apiKey: "AIzaSyBcy4SX9wJMpF6ZNrUsd5kpJalbMcq19S4",
-        authDomain: "funky-monkeys-dev.firebaseapp.com",
-        databaseURL: "https://funky-monkeys-dev.firebaseio.com",
-        projectId: "funky-monkeys-dev",
-        storageBucket: "",
-        messagingSenderId: "1042082599999"
+        apiKey: "AIzaSyB1Ky0rDdrXzjD9Xl2huO9AbsixHQzSgNI",
+        authDomain: "funky-member-system.firebaseapp.com",
+        databaseURL: "https://funky-member-system.firebaseio.com",
+        projectId: "funky-member-system",
+        storageBucket: "funky-member-system.appspot.com",
+        messagingSenderId: "1005314456770"
     }
 };
 
