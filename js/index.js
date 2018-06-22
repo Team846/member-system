@@ -43,11 +43,24 @@ function createMyProfile(profile) {
                 .append(create$Select('graduationYear', 'Graduation Year', [...Array(5)].map((_, i) => year + i), year))
                 .append(create$InputField('email', 'Email', 'email', currentUser.email))
                 .append(create$InputField('cellPhone', 'Cell Phone', 'text', profile.cellPhone))
-                .append(create$InputField('github', 'GitHub Username', 'text', profile.github));
+                .append(create$InputField('github', 'GitHub Username', 'text', profile.github))
+                .append(create$InputField('parent1', 'Parent 1\'s Code', 'text', profile.parent1));
             break;
         case 'Parent':
             myProfile
+                .append($('<button' +
+                    ' class="btn waves-button-input"' +
+                    ' onclick="`${firebase.auth().currentUser.uid}`.copyToClipboard();' +
+                    'M.toast({html: `Copied to clipboard`})">')
+                    .text('Get Parent Code'));
+        // WE WANT TO FALLTHROUGH!!!
+        case 'Mentor':
+            myProfile
                 .append(create$InputField('homePhone', 'Home Phone', 'text', profile.homePhone))
+                .append(create$InputField('cellPhone', 'Cell Phone', 'text', profile.cellPhone))
+                .append(create$InputField('address', 'Address', 'text', profile.address))
+                .append(create$InputField('city', 'City', 'text', profile.city))
+                .append(create$InputField('zipCode', 'Zip Code', 'text', profile.zipCode))
                 .append(create$InputField('company', 'Company', 'text', profile.company))
                 .append(create$Select('employment', 'Employment', ['Full time', 'Part time', 'Unemployed'], profile.employment));
     }
@@ -101,3 +114,22 @@ function showExtendedNavbar(show) {
             break;
     }
 }
+
+String.prototype.copyToClipboard = function() {
+    const textarea = $('<textarea>')
+        .val(this)
+        .attr('readonly', true)
+        .css('position', 'absolute')
+        .css('left', '-9999px')
+        .appendTo($(document.body))[0];
+    const selected = document.getSelection().rangeCount > 0
+        ? document.getSelection().getRangeAt(0)
+        : false;
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    if (selected) {
+        document.getSelection().removeAllRanges();
+        document.getSelection().addRange(selected);
+    }
+};
