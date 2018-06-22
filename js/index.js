@@ -24,19 +24,49 @@ function create$Select(id, label, options, selected) {
         }
         $it.appendTo($select);
     });
-    return $('<div class="input-field">')
+    return $('<div class="black-text input-field">')
         .append($select)
-        .append($('<label>').text(label));
+        .append($('<label>').text(label).attr('for', id));
 }
 
 function createMyProfile(profile) {
-    const $accountType = create$Select('type', 'Account Type', ['Student', 'Parent', 'Mentor'], profile.type);
-    const $myProfile = $('#my-profile')
-        .append($accountType)
-        .append(create$InputField('name', 'Name', 'text', profile.name));
-    $myProfile.find('select').formSelect();
-    $myProfile.find('.input-field').syncWithFireField();
+    const currentUser = firebase.auth().currentUser;
+    const myProfile = $('#my-profile')
+        .empty()
+        .append(create$InputField('name', 'Name', 'text', profile.name || currentUser.displayName))
+        .append(create$Select('accountType', 'Account Type', ['Student', 'Parent', 'Mentor'], profile.accountType));
+
+    switch (profile.accountType) {
+        case 'Student':
+            const year = new Date().getFullYear();
+            myProfile
+                .append(create$Select('graduationYear', 'Graduation Year', [...Array(5)].map((_, i) => year + i), year))
+                .append(create$InputField('email', 'Email', 'email', currentUser.email))
+                .append(create$InputField('cellPhone', 'Cell Phone', 'text', profile.cellPhone))
+                .append(create$InputField('github', 'GitHub Username', 'text', profile.github));
+            break;
+        case 'Parent':
+            myProfile
+                .append(create$InputField('homePhone', 'Home Phone', 'text', profile.homePhone))
+                .append(create$InputField('company', 'Company', 'text', profile.company))
+                .append(create$Select('employment', 'Employment', ['Full time', 'Part time', 'Unemployed'], profile.employment));
+    }
+    const $accountType = $('#accountType');
+    $accountType.formSelect({
+        dropdownOptions: {
+            onCloseEnd: function() {
+                profile.accountType = M.FormSelect.getInstance($accountType[0]).input.value;
+                createMyProfile(profile);
+            }
+        }
+    });
+    $('select').not('#accountType').formSelect();
+    $('.input-field').syncWithFireField();
     M.updateTextFields();
+}
+
+function getAccountType() {
+    return M.FormSelect['getInstance']($('#accountType')[0]).input.value
 }
 
 async function getUserProfile(uid) {

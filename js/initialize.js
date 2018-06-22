@@ -19,11 +19,18 @@ jQuery.fn.extend({
                     if (e.code === 'not-found') {
                         profile.name = user.displayName;
                         doc.set(profile);
-                    } else {
+                    } else if (e.code === 'resource-exhausted') {
+                        M.toast({html: 'Database quota exceeded.'});
+                        console.error(e);
+                        clearInterval(intervalID);
+                    }
+                    else {
                         M.toast({html: "Failed to Sync"});
+                        console.error(e);
+                        clearInterval(intervalID);
                     }
                 });
-            }, 1000);
+            }, 500);
         });
     }
 });
