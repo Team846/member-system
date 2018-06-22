@@ -4,75 +4,49 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="icon"
-              href="assets/images/favicon.ico">
+        <link rel="icon" href="images/favicon.ico">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
-        <link rel="stylesheet"
-              href="assets/css/dashboard.css">
-        <link rel="stylesheet"
-              href="assets/css/header.css">
-        <link rel="stylesheet"
-              href="assets/css/page.css">
-        <link rel="stylesheet"
-              href="assets/css/index.css">
-        <title>Member System - Lynbrook Robotics</title>
+        <link rel="stylesheet" href="css/index.css">
+        <link rel="stylesheet" href="css/navbar.css">
+        <title>Lynbrook Robotics Member System</title>
     </head>
     <body>
         <div class="navbar-fixed">
-            <nav class="yellow darken-1 nav-extended">
+            <nav class="darken-2 nav-extended yellow">
                 <div class="nav-wrapper">
-                    <a href="/" class="brand-logo hide-on-small-only">Lynbrook Robotics</a>
-                    <a href="#" data-target="mobile-menu" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-                    <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <li><a href="http://lynbrookrobotics.com">Home</a></li>
-                        <li><a href="http://lynbrookrobotics.com/member-system">Members</a></li>
+                    <a class="brand-logo hide-on-small-and-down">Lynbrook Robotics</a>
+                    <a href="#" data-target="hamburger-menu" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                    <ul class="right">
+                        <li><a class="black-text btn darken-3 waves-effect white" id="auth-toggle">Sign In</a></li>
                     </ul>
                 </div>
-                <div class="nav-content">
-                    <ul class="tabs tabs-transparent hide-on-small-only">
-                        <li data-page="0" class="active sublink tab"><a>Information</a></li>
-                        <li data-page="1" class="sublink tab"><a>My Profile</a></li>
-                        <li data-page="2" class="sublink tab"><a>Members</a></li>
-                        <li class="right tab sign-in"><a>Sign In</a></li>
+                <div class="nav-content" hidden>
+                    <ul class="hide-on-small-and-down tabs tabs-transparent">
+                        <li class="tab"><a class="active">My Profile</a></li>
+                        <li class="tab"><a>Members</a></li>
                     </ul>
                 </div>
             </nav>
         </div>
-        <ul class="sidenav" id="mobile-menu">
-            <li><a href="http://lynbrookrobotics.com">Home</a></li>
-            <li><a href="http://lynbrookrobotics.com/member-system">Members</a></li>
-            <li>
-                <div class="divider"></div>
-            </li>
-            <li class="hide-on-med-only sublink" data-page="0"><a>Information</a></li>
-            <li class="hide-on-med-only sublink" data-page="1"><a>My Profile</a></li>
-            <li class="hide-on-med-only sublink" data-page="2"><a>Members</a></li>
-            <li class="hide-on-med-only sign-in"><a>Sign In</a></li>
-        </ul>
-        <div style="position: relative">
-            <div class="page information-container">
-                <div class="container" id="information" style="justify-content: center">
-                    <h2>Lynbrook Robotics Member Dashboard</h2>
-                    <p>Welcome to Lynbrook Robotics! Get started by <span class="sign-in"
-                                                                          style="text-decoration: underline">signing in</span>.
-                        Fill out all fields you can in your profile, so that other members are able to contact you. As
-                        you
-                        gain higher positions in the team, you will be able to do more and more with the dashboard.</p>
-                    <img class="responsive-img" src="assets/images/SVR2017.jpg"
-                         alt="Team Picture from Silicon Valley Regional 2017">
-                </div>
+        <div class="content-container">
+            <div class="page">
+                <div class="container" id="my-profile"></div>
             </div>
-            <div class="page dashboard-container">
-                <div class="container" id="dashboard"></div>
+            <div class="page">
+                <div class="container" id="members"></div>
             </div>
         </div>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
         <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-auth.js"></script>
         <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-firestore.js"></script>
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-        <script src="assets/js/index.js"></script>
+        <script src="http://code.jquery.com/jquery-3.3.1.min.js"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+                crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+        <script src="js/configure-firebase.js"></script>
+        <script src="js/index.js"></script>
+        <script src="js/initialize.js"></script>
     </body>
 </html>

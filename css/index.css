@@ -1,0 +1,17 @@
+body {
+    overflow-x: hidden;
+}
+
+.content-container {
+    position: relative;
+}
+
+.input-field {
+    margin: 32px 0;
+}
+
+.page {
+    position: absolute;
+    top: 0;
+    width: 100vw;
+}
