@@ -157,16 +157,3 @@ String.prototype.copyToClipboard = function() {
         document.getSelection().addRange(selected);
     }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
