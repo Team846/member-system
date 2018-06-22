@@ -2,7 +2,7 @@
  * This is the file that DOES stuff, as in adding listeners for events.
  */
 jQuery.fn.extend({
-    syncWithFireField: function() {
+    syncWithWindow: function() {
         return this.each((i, element) => {
             // Send the data in this element to Firestore every second
             const intervalID = setInterval(() => {
@@ -11,25 +11,10 @@ jQuery.fn.extend({
                     doc = firebase.firestore().doc(`users/${user.uid}`);
                 if (user === null || user === undefined) clearInterval(intervalID);
                 const $element = $selects.length === 0 ? $(element).find('input') : $selects;
-                const field = $element.attr('id'), profile = {};
+                const field = $element.attr('id');
                 profile[field] = $element[0] instanceof HTMLSelectElement
-                    ? M.FormSelect.getInstance($element[0]).input.value
+                    ? M.FormSelect['getInstance']($element[0]).input.value
                     : $element.val();
-                doc.update(profile).catch(e => {
-                    if (e.code === 'not-found') {
-                        profile.name = user.displayName;
-                        doc.set(profile);
-                    } else if (e.code === 'resource-exhausted') {
-                        M.toast({html: 'Database quota exceeded.'});
-                        console.error(e);
-                        clearInterval(intervalID);
-                    }
-                    else {
-                        M.toast({html: "Failed to Sync"});
-                        console.error(e);
-                        clearInterval(intervalID);
-                    }
-                });
             }, 500);
         });
     }
@@ -58,6 +43,7 @@ firebase.auth().onAuthStateChanged(user => {
             $authToggle.text('Sign Out');
             showExtendedNavbar();
             getUserProfile().then(profile => {
+                window.profile = profile;
                 createMyProfile(profile || {});
             });
             break;
