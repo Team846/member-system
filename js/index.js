@@ -42,7 +42,7 @@ function createMyProfile(profile) {
     const myProfile = $('#my-profile')
         .empty()
         .append(create$InputField('name', 'Name', 'text', profile.name || currentUser.displayName))
-        .append(create$Select('gender', 'Gender', ['Male', 'Female', 'Other'], 'Male'))
+        .append(create$Select('gender', 'Gender', ['Male', 'Female', 'Other'], profile.gender))
         .append(create$InputField('birthday', 'Birthday', 'date', profile.birthday))
         .append(create$Select('accountType', 'Account Type', ['Student', 'Parent', 'Mentor'], profile.accountType));
 
@@ -78,18 +78,10 @@ function createMyProfile(profile) {
     myProfile
         .append($('<button class="btn waves-effect">').text('Update').click(() => {
             M.toast({html: "Updating your profile..."});
-            firebase.firestore().doc(`users/${firebase.auth().currentUser.uid}`).set(profile).then(() => {
-                M.toast({html: "Your profile has been updated"});
-            }).catch((e) => {
-                if (e.code === 'resource-exhausted') {
-                    M.toast({html: 'Try again tomorrow'});
-                } else {
-                    M.toast({html: "Failed to update"});
-                }
-            });
+            collectAndSendProfileInfo();
         }));
     const $accountType = $('#accountType');
-    $accountType.formSelect({
+    $accountType['formSelect']({
         dropdownOptions: {
             onCloseEnd: function() {
                 profile.accountType = M.FormSelect.getInstance($accountType[0]).input.value;
@@ -97,20 +89,40 @@ function createMyProfile(profile) {
             }
         }
     });
-    $('select').not('#accountType').formSelect();
-    $('.input-field').syncWithWindow();
+    $('select').not('#accountType')['formSelect']();
     M.updateTextFields();
 }
-
-function getAccountType() {
-    return M.FormSelect['getInstance']($('#accountType')[0]).input.value
-}
-
 async function getUserProfile(uid) {
     if (firebase.auth().currentUser === null) {
         throw new Error("Attempted to get current user's profile without a user logged in");
     }
     return (await firebase.firestore().doc(uid || `users/${firebase.auth().currentUser.uid}`).get()).data();
+}
+
+function collectAndSendProfileInfo() {
+    const profile = {};
+    const $myProfile = $('#my-profile');
+    $myProfile
+        .find('select')
+        .each((i, select) => {
+            profile[select.id] = M.FormSelect['getInstance'](select).input.value
+        });
+    $myProfile
+        .find('input')
+        .not('.select-dropdown')
+        .each((i, input) => {
+            profile[input.id] = input.value;
+        });
+    firebase.firestore().doc(`users/${firebase.auth().currentUser.uid}`).set(profile).then(() => {
+        M.toast({html: "Your profile has been updated"});
+    }).catch((e) => {
+        if (e.code === 'resource-exhausted') {
+            M.toast({html: 'Try again tomorrow'});
+        } else {
+            M.toast({html: "Failed to update"});
+        }
+        console.error(e);
+    });
 }
 
 function openSignInPopup() {
