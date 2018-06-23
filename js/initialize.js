@@ -24,8 +24,7 @@ firebase.auth().onAuthStateChanged(user => {
             $authToggle.text('Sign Out');
             showExtendedNavbar();
             getUserProfile().then(profile => {
-                window.profile = profile || {};
-                createMyProfile(window.profile);
+                createMyProfile(profile || {});
             });
             break;
     }
