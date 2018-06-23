@@ -42,29 +42,22 @@ function createMyProfile(profile) {
     const myProfile = $('#my-profile')
         .empty()
         .append(create$InputField('name', 'Name', 'text', profile.name || currentUser.displayName))
+        .append(create$InputField('email', 'Email', 'email', currentUser.email))
         .append(create$Select('gender', 'Gender', ['Male', 'Female', 'Other'], profile.gender))
-        .append(create$InputField('birthday', 'Birthday', 'date', profile.birthday))
-        .append(create$Select('accountType', 'Account Type', ['Student', 'Parent', 'Mentor'], profile.accountType));
+        .append(create$Select('accountType', 'Account Type', ['Student', 'Parent', 'Mentor'], profile.accountType))
+        .append(create$InputField('cellPhone', 'Cell Phone', 'text', profile.cellPhone));
 
     switch (profile.accountType) {
         case 'Student':
             const year = new Date().getFullYear();
             myProfile
+                .append(create$InputField('birthday', 'Birthday', 'date', profile.birthday))
                 .append(create$Select('graduationYear', 'Graduation Year', [...Array(5)].map((_, i) => year + i), year))
-                .append(create$InputField('email', 'Email', 'email', currentUser.email))
-                .append(create$InputField('cellPhone', 'Cell Phone', 'text', profile.cellPhone))
                 .append(create$InputField('github', 'GitHub Username', 'text', profile.github))
-                .append(create$InputField('parent1', 'Parent 1\'s Code', 'text', profile.parent1))
+                .append(create$InputField('parent1', 'Parent 1\'s Code (From their dashboard)', 'text', profile.parent1))
                 .append(create$InputField('parent2', 'Parent 2\'s Code', 'text', profile.parent2));
             break;
         case 'Parent':
-            myProfile
-                .append($('<button' +
-                    ' class="btn waves-button-input"' +
-                    ' onclick="`${firebase.auth().currentUser.uid}`.copyToClipboard();' +
-                    'M.toast({html: `Copied to clipboard`})">')
-                    .text('Get Parent Code'));
-        // WE WANT TO FALLTHROUGH!!!
         case 'Mentor':
             myProfile
                 .append(create$InputField('homePhone', 'Home Phone', 'text', profile.homePhone))
@@ -75,6 +68,13 @@ function createMyProfile(profile) {
                 .append(create$InputField('company', 'Company', 'text', profile.company))
                 .append(create$Select('employment', 'Employment', ['Full time', 'Part time', 'Unemployed'], profile.employment));
     }
+    if (profile.accountType === 'Parent')
+        myProfile
+            .append($('<button' +
+                ' class="btn waves-button-input"' +
+                ' onclick="`${firebase.auth().currentUser.uid}`.copyToClipboard();' +
+                'M.toast({html: `Copied to clipboard`})">')
+                .text('Get Parent Code'));
     myProfile
         .append($('<button class="btn waves-effect">').text('Update').click(() => {
             M.toast({html: "Updating your profile..."});
@@ -92,6 +92,7 @@ function createMyProfile(profile) {
     $('select').not('#accountType')['formSelect']();
     M.updateTextFields();
 }
+
 async function getUserProfile(uid) {
     if (firebase.auth().currentUser === null) {
         throw new Error("Attempted to get current user's profile without a user logged in");
@@ -151,6 +152,14 @@ function showExtendedNavbar(show) {
     }
 }
 
+function switchToPage(pageNumber) {
+    $('.page').each((i, page) => {
+        $(page).animate({
+            left: `${(i - pageNumber) * 100}vw`
+        })
+    })
+}
+
 String.prototype.copyToClipboard = function() {
     const textarea = $('<textarea>')
         .val(this)
@@ -169,3 +178,34 @@ String.prototype.copyToClipboard = function() {
         document.getSelection().addRange(selected);
     }
 };
+
+function setupMembers() {
+    if (firebase.auth().currentUser === null || firebase.auth().currentUser === undefined) return;
+    firebase.firestore().collection('users').get().then(collection => {
+        const table = $('<table>');
+        collection.forEach(doc => {
+            const profile = doc.data();
+            table
+                .append(profile.accountType === 'Student'
+                    ? buildRowFromStudentProfile(profile)
+                    : buildRowFromAdultProfile(profile));
+        });
+        $('#members').append(table);
+    });
+}
+
+function createTD(text) {
+    return $('<td>').text(text || {})
+}
+
+function buildRowFromStudentProfile(profile) {
+    return $('<tr>')
+        .append(createTD(profile.name))
+        .append(createTD(profile.email))
+        .append(createTD(profile.gender))
+        .append(createTD(profile.cellPhone))
+}
+
+function buildRowFromAdultProfile(profile) {
+
+}

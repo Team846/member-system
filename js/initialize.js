@@ -26,6 +26,8 @@ firebase.auth().onAuthStateChanged(user => {
             getUserProfile().then(profile => {
                 createMyProfile(profile || {});
             });
+            setupMembers();
+            switchToPage(1);
             break;
     }
 });
