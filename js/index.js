@@ -42,7 +42,7 @@ function createMyProfile(profile) {
     const myProfile = $('#my-profile')
         .empty()
         .append(create$InputField('name', 'Name', 'text', profile.name || currentUser.displayName))
-        .append(create$InputField('email', 'Email', 'email', currentUser.email))
+        .append(create$InputField('email', 'Email', 'email', profile.email || currentUser.email))
         .append(create$Select('gender', 'Gender', ['Male', 'Female', 'Other'], profile.gender))
         .append(create$Select('accountType', 'Account Type', ['Student', 'Parent', 'Mentor'], profile.accountType))
         .append(create$InputField('cellPhone', 'Cell Phone', 'text', profile.cellPhone));
@@ -76,7 +76,7 @@ function createMyProfile(profile) {
                 'M.toast({html: `Copied to clipboard`})">')
                 .text('Get Parent Code'));
     myProfile
-        .append($('<button class="btn waves-effect">').text('Update').click(() => {
+        .append($('<button class="btn waves-effect">').css('margin', "0 20px").text('Update').click(() => {
             M.toast({html: "Updating your profile..."});
             collectAndSendProfileInfo();
         }));
@@ -182,15 +182,26 @@ String.prototype.copyToClipboard = function() {
 function setupMembers() {
     if (firebase.auth().currentUser === null || firebase.auth().currentUser === undefined) return;
     firebase.firestore().collection('users').get().then(collection => {
-        const table = $('<table>');
+        window.users = collection.docs;
+        const table = $('<table>')
+            .addClass('striped')
+            .addClass('highlight');
+        table
+            .append($('<thead>')
+                .append($('<tr>')
+                    .append(`<th>Name</th>`)
+                    .append(`<th>Email</th>`)
+                    .append(`<th>Gender</th>`)
+                    .append(`<th>Cell Phone</th>`)));
+        const tBody = $('<tbody>').appendTo(table);
         collection.forEach(doc => {
             const profile = doc.data();
-            table
+            tBody
                 .append(profile.accountType === 'Student'
                     ? buildRowFromStudentProfile(profile)
                     : buildRowFromAdultProfile(profile));
         });
-        $('#members').append(table);
+        $('#members').empty().append(table);
     });
 }
 
@@ -204,6 +215,32 @@ function buildRowFromStudentProfile(profile) {
         .append(createTD(profile.email))
         .append(createTD(profile.gender))
         .append(createTD(profile.cellPhone))
+        .click(() => {
+            const modal = $('#profile-modal');
+            modal
+                .find('.modal-content')
+                .empty()
+                .append(`<h4 class="left">${profile.name}</h4>`)
+                .append(`<h4 class="right"><a href="mailto:${profile.email}">${profile.email}</a></h4>`)
+                .append($('<table>')
+                    .append($('<tr>')
+                        .append(createTD('Gender'))
+                        .append(createTD(profile.gender)))
+                    .append($('<tr>')
+                        .append(createTD('Cell Phone'))
+                        .append(createTD(profile.cellPhone)))
+                    .append($('<tr>')
+                        .append(createTD('Birthday'))
+                        .append(createTD(profile.birthday)))
+                    .append($('<tr>')
+                        .append(createTD('Graduating in'))
+                        .append(createTD(profile.graduationYear)))
+                    .append($('<tr>')
+                        .append(createTD('GitHub'))
+                        .append(`<td><a href="https://github.com/${profile.github}">${profile.github}</a>`))
+                );
+            modal.modal('open');
+        });
 }
 
 function buildRowFromAdultProfile(profile) {

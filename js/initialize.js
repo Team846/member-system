@@ -31,3 +31,9 @@ firebase.auth().onAuthStateChanged(user => {
             break;
     }
 });
+
+$('#profile-modal').modal();
+
+$('.inlink').click(e => {
+    switchToPage(e.target.parentNode.getAttribute('data-page'));
+});
