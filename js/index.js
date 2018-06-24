@@ -220,8 +220,10 @@ function buildRowFromStudentProfile(profile) {
             modal
                 .find('.modal-content')
                 .empty()
-                .append(`<h4 class="left">${profile.name}</h4>`)
-                .append(`<h4 class="right"><a href="mailto:${profile.email}">${profile.email}</a></h4>`)
+                .append($('<h4 class="left">').text(profile.name))
+                .append($('<h4 class="right">')
+                    .append($(`<a href="mailto:${profile.email}">`)
+                        .text(profile.email)))
                 .append($('<table>')
                     .append($('<tr>')
                         .append(createTD('Gender'))
@@ -237,8 +239,9 @@ function buildRowFromStudentProfile(profile) {
                         .append(createTD(profile.graduationYear)))
                     .append($('<tr>')
                         .append(createTD('GitHub'))
-                        .append(`<td><a href="https://github.com/${profile.github}">${profile.github}</a>`))
-                );
+                        .append($('<td>')
+                            .append($(`<a href="https://github.com/${profile.github}">`)
+                                .text(profile.github)))));
             modal.modal('open');
         });
 }
