@@ -70,10 +70,7 @@ function createMyProfile(profile) {
     }
     if (profile.accountType === 'Parent')
         myProfile
-            .append($('<button' +
-                ' class="btn waves-button-input"' +
-                ' onclick="`${firebase.auth().currentUser.uid}`.copyToClipboard();' +
-                'M.toast({html: `Copied to clipboard`})">')
+            .append($('<button class="btn waves-button-input" onclick="`${firebase.auth().currentUser.uid}`.copyToClipboard();M.toast({html: `Copied to clipboard`})">')
                 .text('Get Parent Code'));
     myProfile
         .append($('<button class="btn waves-effect">').css('margin', "0 20px").text('Update').click(() => {
