@@ -3,26 +3,92 @@
  */
 // switchToPage(0);
 
+(() => {
+    let $graduationYear = $('#graduation-year').empty();
+
+    [...Array(5)].forEach((_, i) => {
+        const year = new Date().getFullYear() + i;
+        $graduationYear.append(`<option value="${year}">${year}</option>`);
+    });
+})(); // Setup the graduation year select box
+
+(() => {
+    let $subpageLinks = $('.subpage-link').click(async (e) => {
+        const page = e.target.getAttribute('data-page');
+        await switchToPage(page);
+        $subpageLinks.removeClass("active").filter(`[data-page=${page}]`).addClass('active');
+    });
+})(); // Setup the subpage links
+
+(() => {
+    let isCompact = false;
+    let $compact = $('#compact-toggle').click(() => {
+        if (isCompact) {
+            showExtendedNavbar();
+            document.body.classList.add('cozy');
+            document.body.classList.remove('compact');
+            $compact.text('Compact');
+        } else {
+            showExtendedNavbar(false);
+            document.body.classList.add('compact');
+            document.body.classList.remove('cozy');
+            $compact.text('Cozy');
+        }
+        isCompact = !isCompact;
+    });
+})(); // Setup the compact / cozy toggle
+
+$('#profile-modal').modal({
+    onCloseEnd: () => {
+        document.body.style.overflowY = 'hidden';
+    }
+}); // Setup the user profile modal
+
+$('.sidenav').sidenav();
+
+$('select').formSelect(); // Initialize the select elements
+
+$('#account-type').formSelect({
+    dropdownOptions: {
+        onCloseEnd: () => {
+            setTimeout(() => {
+                setupSpecificProfile(M.FormSelect.getInstance($('#account-type')[0]).input.value);
+            }, 100);
+        }
+    }
+}); // It's a special dropdown
+
+const columns = Math.min(Math.floor((innerWidth - 64) / 200), 9); // Oooh big boy math, columns should be over 200px
+const columnWidth = Math.floor(innerWidth - 64) / columns;
+const tableOrder = ['name', 'email', 'cell-phone', 'home-phone', 'preferred-contact', 'address'];
+const row = $('<tr>');
+for (let i = 0; i < columns; i++) {
+    row.append($('<th>').text(tableOrder[i].replace('-', ' ').toTitleCase()).width(columnWidth));
+}
+$('#member-table').find('thead').append(row);
+
 firebase.auth()['onAuthStateChanged'](async (user) => {
     window.user = user;
     const $progress = $('#progress');
+    const $myProfile = $('#my-profile');
     switch (user) {
         case null:
         case undefined:
             $authToggle.text('Sign In');
             await showExtendedNavbar(false); // Allow the animation to complete
+            $myProfile.slideUp();
             $progress.fadeOut();
             break;
         default:
             $authToggle.text('Sign Out');
-            window.users = firebase.firestore().collection('users').get();
+            let users = firebase.firestore().collection('users').get();
             await showExtendedNavbar();
             $progress.fadeIn();
             $('#name').val(user.displayName);
             $('#uid').val(user.uid);
             $('#email').val(user.email);
             $('#photo-url').val(user.photoURL);
-            window.$myProfile = $('#my-profile').submit(e => {
+            $myProfile.submit(e => {
                 e.preventDefault(); // Stop the page from reloading
                 const profile = {};
                 $myProfile
@@ -43,9 +109,9 @@ firebase.auth()['onAuthStateChanged'](async (user) => {
                         console.error(e);
                         M.toast({html: "Failed to updated"});
                     });
-            });
+            }).slideDown();
             M.updateTextFields();
-            window.users.then(collection => {
+            users.then(collection => {
                 $progress.fadeOut();
                 collection.forEach(doc => {
                     const profile = doc.data();
@@ -91,21 +157,9 @@ firebase.auth()['onAuthStateChanged'](async (user) => {
                                 .html('Download<i class="right material-icons">cloud_download</i>')
                                 .css('margin', '16px')
                                 .click(() => {
-                                    download(`${profile.uid}.vcf`, `
-BEGIN:VCARD
-VERSION:3.0
-FN:${profile.name}
-ORG:${profile['place-of-employment']}
-PHOTO;VALUE=URI:${profile['photo-url']}
-TEL;TYPE=WORK,VOICE:${profile['cell-phone']}
-TEL;TYPE=HOME,VOICE:${profile['home-phone']}
-ADR;TYPE=HOME:;;${profile.address};San Jose;CA;95129;United States of America
-LABEL;TYPE=HOME:${profile.address}\nSan Jose\, CA 95129\nUnited States of America
-EMAIL:${profile.email}
-END:VCARD
-                                    `);
+                                    download(`${profile.uid}.vcf`, vCardFromProfile(profile));
                                 }))
-                        .modal('open');
+                            .modal('open');
                     });
                     $('#member-table').find('tbody').append(row);
                 });
@@ -115,7 +169,7 @@ END:VCARD
     }
 });
 
-window.$authToggle = $('#auth-toggle').click(() => {
+let $authToggle = $('#auth-toggle').click(() => {
     switch (firebase.auth().currentUser) {
         case null:
         case undefined:
@@ -126,88 +180,3 @@ window.$authToggle = $('#auth-toggle').click(() => {
             break;
     }
 }); // Setup login and signing out
-
-$('#profile-modal').modal({
-    onCloseEnd: () => {
-        document.body.style.overflowY = 'hidden';
-    }
-}); // Setup the user profile modal
-
-window.$subpageLinks = $('.subpage-link').click(async (e) => {
-    const page = e.target.getAttribute('data-page');
-    await switchToPage(page);
-    $subpageLinks.removeClass("active").filter(`[data-page=${page}]`).addClass('active');
-});
-
-window.$graduationYear = $('#graduation-year').empty();
-
-[...Array(5)].forEach((_, i) => {
-    const year = new Date().getFullYear() + i;
-    $graduationYear.append(`<option value="${year}">${year}</option>`);
-});
-
-$('select').formSelect(); // Initialize the select elements
-$('#account-type').formSelect({
-    dropdownOptions: {
-        onCloseEnd: () => {
-            setTimeout(() => {
-                setupSpecificProfile(M.FormSelect.getInstance($('#account-type')[0]).input.value);
-            }, 100);
-        }
-    }
-}); // It's a special dropdown
-
-let ticking = false;
-addEventListener('scroll', () => {
-    ticking = true;
-    if (ticking) {
-        requestAnimationFrame(() => {
-            $('#member-table').find('thead')
-                .css('fixed');
-            ticking = false;
-        });
-    }
-});
-
-String.prototype.toTitleCase = function() {
-    const str = this.toLowerCase().split(' ');
-    for (let i = 0; i < str.length; i++) {
-        str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
-    }
-    return str.join(' ');
-};
-
-window.columns = Math.min(Math.floor((innerWidth - 64) / 200), 9); // Oooh big boy math, columns should be over 200px
-window.columnWidth = Math.floor(innerWidth - 64) / columns;
-window.tableOrder = ['name', 'email', 'cell-phone', 'home-phone', 'preferred-contact', 'address'];
-const row = $('<tr>');
-for (let i = 0; i < columns; i++) {
-    row.append($('<th>').text(tableOrder[i].replace('-', ' ').toTitleCase()).width(columnWidth));
-}
-$('#member-table').find('thead').append(row);
-
-window.compact = false;
-window.$compact = $('#compact-toggle').click(e => {
-    if (compact) {
-        showExtendedNavbar();
-        $('.input-field').animate({
-            marginBottom: 32,
-            marginTop: 32
-        });
-        $('#member-page').animate({
-            marginTop: -32
-        });
-        $compact.text('Compact');
-    } else {
-        showExtendedNavbar(false);
-        $('.input-field').animate({
-            marginBottom: 16,
-            marginTop: 16
-        });
-        $('#member-page').animate({
-            marginTop: -64
-        });
-        $compact.text('Cozy');
-    }
-    compact = !compact
-});

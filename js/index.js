@@ -2,6 +2,14 @@
  * THIS FILE SHOULD NOT RUN ANY CODE!!!!
  */
 
+String.prototype.toTitleCase = function() {
+    const str = this.toLowerCase().split(' ');
+    for (let i = 0; i < str.length; i++) {
+        str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
+    }
+    return str.join(' ');
+};
+
 function download(filename, text) {
     const element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
@@ -46,6 +54,10 @@ function switchToPage(pageNumber) {
                 left: `${(i - pageNumber) * 100}vw`
             }, resolve);
             if (pageNumber !== '0') {
+                scrollTo({
+                    behavior: "instant",
+                    top: 0
+                });
                 document.body.style.overflowY = 'hidden';
             } else {
                 document.body.style.overflowY = 'scroll';
@@ -69,4 +81,19 @@ function setupSpecificProfile(value) {
             });
             break;
     }
+}
+
+function vCardFromProfile(profile) {
+    return `
+BEGIN:VCARD
+VERSION:3.0
+FN:${profile.name}
+ORG:${profile['place-of-employment']}
+PHOTO;VALUE=URI:${profile['photo-url']}
+TEL;TYPE=WORK,VOICE:${profile['cell-phone']}
+TEL;TYPE=HOME,VOICE:${profile['home-phone']}
+ADR;TYPE=HOME:;;${profile.address};San Jose;CA;95129;United States of America
+LABEL;TYPE=HOME:${profile.address}\nSan Jose\, CA 95129\nUnited States of America
+EMAIL:${profile.email}
+END:VCARD`;
 }
