@@ -1,4 +1,9 @@
 body {
+    background-image: url(../images/MonkeyBG.png);
+    background-attachment: fixed;
+    -webkit-background-size: cover;
+    background-size: cover;
+    min-height: 100vh;
     overflow-x: hidden;
 }
 
@@ -36,6 +41,10 @@ body {
     width: calc(100vw - 64px);
     height: calc(100vh - 110px);
     overflow: auto;
+}
+
+#my-profile {
+    background-color: white;
 }
 
 #profile-modal {
