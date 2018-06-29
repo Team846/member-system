@@ -96,7 +96,7 @@ BEGIN:VCARD
 VERSION:3.0
 FN:${profile.name}
 ORG:${profile['place-of-employment']}
-PHOTO;VALUE=URI:${profile['photo-url']}
+LOGO;VALUE=URI:${profile['photo-url']}
 TEL;TYPE=WORK,VOICE:${profile['cell-phone']}
 TEL;TYPE=HOME,VOICE:${profile['home-phone']}
 ADR;TYPE=HOME:;;${profile.address};San Jose;CA;95129;United States of America
