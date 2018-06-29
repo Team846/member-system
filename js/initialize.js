@@ -109,7 +109,11 @@ window.$authToggle = $('#auth-toggle').click(() => {
     }
 }); // Setup login and signing out
 
-$('#profile-modal').modal(); // Setup the user profile modal
+$('#profile-modal').modal({
+    onCloseEnd: () => {
+        document.body.style.overflowY = 'hidden';
+    }
+}); // Setup the user profile modal
 
 window.$subpageLinks = $('.subpage-link').click(async (e) => {
     const page = e.target.getAttribute('data-page');
