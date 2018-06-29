@@ -87,14 +87,25 @@ firebase.auth()['onAuthStateChanged'](async (user) => {
                             .append($('<h3>').text(profile['name']))
                             .append($('<h4>').text(profile['email']))
                             .append($('<table>').append(tBody))
-                            // .append($('<button class="waves-effect">')
-                            //     .text('Download')
-                            //     .click(() => {
-                            //         const vCard = 'BEGIN:VCARD\r\n' +
-                            //             `FN:${profile.name}` +
-                            //             'END:VCARD'
-                            //     }))
-                        .modal('open');
+                            .append($('<button class="btn darken-2 yellow waves-effect">')
+                                .html('Download<i class="right material-icons">cloud_download</i>')
+                                .css('margin', '16px')
+                                .click(() => {
+                                    download(`${profile.uid}.vcf`, `
+BEGIN:VCARD
+VERSION:3.0
+FN:${profile.name}
+ORG:${profile['place-of-employment']}
+PHOTO;VALUE=URI:${profile['photo-url']}
+TEL;TYPE=WORK,VOICE:${profile['cell-phone']}
+TEL;TYPE=HOME,VOICE:${profile['home-phone']}
+ADR;TYPE=HOME:;;${profile.address};San Jose;CA;95129;United States of America
+LABEL;TYPE=HOME:${profile.address}\nSan Jose\, CA 95129\nUnited States of America
+EMAIL:${profile.email}
+END:VCARD
+                                    `);
+                                }))
+                            .modal('open');
                     });
                     $('#member-table').find('tbody').append(row);
                 });
