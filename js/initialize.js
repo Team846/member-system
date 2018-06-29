@@ -68,8 +68,8 @@ firebase.auth()['onAuthStateChanged'](async (user) => {
                     for (let i = 0; i < columns; i++) {
                         row.append($('<td>').text(profile[tableOrder[i]]).width(columnWidth));
                     }
-                    row.click(e => {
-                        const tbody = $('<tbody>');
+                    row.click(() => {
+                        const tBody = $('<tbody>');
                         Object.keys(profile).forEach(key => {
                             if (key === 'uid' || key === 'photo-url') return;
                             tbody.append($('<tr>')
@@ -87,6 +87,13 @@ firebase.auth()['onAuthStateChanged'](async (user) => {
                             .append($('<h3>').text(profile['name']))
                             .append($('<h4>').text(profile['email']))
                             .append($('<table>').append(tbody))
+                            .append($('<button class="waves-effect">')
+                                .text('Download')
+                                .click(() => {
+                                    const vCard = 'BEGIN:VCARD\r\n' +
+                                        `FN:${profile.name}` +
+                                        'END:VCARD'
+                                }))
                         .modal('open');
                     });
                     $('#member-table').find('tbody').append(row);
@@ -140,7 +147,7 @@ $('#account-type').formSelect({
 }); // It's a special dropdown
 
 let ticking = false;
-addEventListener('scroll', e => {
+addEventListener('scroll', () => {
     ticking = true;
     if (ticking) {
         requestAnimationFrame(() => {
