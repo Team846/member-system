@@ -49,19 +49,9 @@ function showExtendedNavbar(shouldShowNavbar) {
 
 function switchToPage(pageNumber) {
     return new Promise(function(resolve, reject) {
-        $('.page').each((i, page) => {
-            $(page).animate({
-                left: `${(i - pageNumber) * 100}vw`
-            }, resolve);
-            if (pageNumber !== '0') {
-                scrollTo({
-                    behavior: "instant",
-                    top: 0
-                });
-                document.body.style.overflowY = 'hidden';
-            } else {
-                document.body.style.overflowY = 'scroll';
-            }
+        const $page = $('.page');
+        $page.fadeOut(() => {
+            $($page[pageNumber]).fadeIn(resolve);
         });
     });
 }
