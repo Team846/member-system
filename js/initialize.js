@@ -105,7 +105,7 @@ EMAIL:${profile.email}
 END:VCARD
                                     `);
                                 }))
-                            .modal('open');
+                        .modal('open');
                     });
                     $('#member-table').find('tbody').append(row);
                 });
