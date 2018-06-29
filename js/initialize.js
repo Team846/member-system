@@ -72,7 +72,7 @@ firebase.auth()['onAuthStateChanged'](async (user) => {
                         const tBody = $('<tbody>');
                         Object.keys(profile).forEach(key => {
                             if (key === 'uid' || key === 'photo-url') return;
-                            tbody.append($('<tr>')
+                            tBody.append($('<tr>')
                                 .append($('<td>').text(key.replace(/-/g, ' ').toTitleCase()))
                                 .append($('<td>').text(profile[key])))
                         });
@@ -86,14 +86,14 @@ firebase.auth()['onAuthStateChanged'](async (user) => {
                                 .css('border-radius', '50%'))
                             .append($('<h3>').text(profile['name']))
                             .append($('<h4>').text(profile['email']))
-                            .append($('<table>').append(tbody))
-                            .append($('<button class="waves-effect">')
-                                .text('Download')
-                                .click(() => {
-                                    const vCard = 'BEGIN:VCARD\r\n' +
-                                        `FN:${profile.name}` +
-                                        'END:VCARD'
-                                }))
+                            .append($('<table>').append(tBody))
+                            // .append($('<button class="waves-effect">')
+                            //     .text('Download')
+                            //     .click(() => {
+                            //         const vCard = 'BEGIN:VCARD\r\n' +
+                            //             `FN:${profile.name}` +
+                            //             'END:VCARD'
+                            //     }))
                         .modal('open');
                     });
                     $('#member-table').find('tbody').append(row);
