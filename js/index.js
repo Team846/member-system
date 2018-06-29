@@ -32,6 +32,11 @@ function switchToPage(pageNumber) {
             $(page).animate({
                 left: `${(i - pageNumber) * 100}vw`
             }, resolve);
+            if (pageNumber !== '0') {
+                document.body.style.overflowY = 'hidden';
+            } else {
+                document.body.style.overflowY = 'scroll';
+            }
         });
     });
 }

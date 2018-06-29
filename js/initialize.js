@@ -1,6 +1,8 @@
 /*
  * This is the file that DOES stuff, as in adding listeners for events.
  */
+// switchToPage(0);
+
 firebase.auth()['onAuthStateChanged'](async (user) => {
     window.user = user;
     const $progress = $('#progress');
@@ -19,6 +21,7 @@ firebase.auth()['onAuthStateChanged'](async (user) => {
             $('#name').val(user.displayName);
             $('#uid').val(user.uid);
             $('#email').val(user.email);
+            $('#photo-url').val(user.photoURL);
             window.$myProfile = $('#my-profile').submit(e => {
                 e.preventDefault(); // Stop the page from reloading
                 const profile = {};
@@ -58,8 +61,35 @@ firebase.auth()['onAuthStateChanged'](async (user) => {
                                     $input.val(profile[key]);
                                 }
                             });
-                        } catch (e) {}
+                        } catch (e) {
+                        }
                     }
+                    let row = $('<tr>');
+                    for (let i = 0; i < columns; i++) {
+                        row.append($('<td>').text(profile[tableOrder[i]]).width(columnWidth));
+                    }
+                    row.click(e => {
+                        const tbody = $('<tbody>');
+                        Object.keys(profile).forEach(key => {
+                            if (key === 'uid' || key === 'photo-url') return;
+                            tbody.append($('<tr>')
+                                .append($('<td>').text(key.replace(/-/g, ' ').toTitleCase()))
+                                .append($('<td>').text(profile[key])))
+                        });
+
+                        $('#profile-modal')
+                            .empty()
+                            .append($(`<img class="left" src="${profile['photo-url']}">`)
+                                .width(128)
+                                .height(128)
+                                .css('margin-right', '32px')
+                                .css('border-radius', '50%'))
+                            .append($('<h3>').text(profile['name']))
+                            .append($('<h4>').text(profile['email']))
+                            .append($('<table>').append(tbody))
+                        .modal('open');
+                    });
+                    $('#member-table').find('tbody').append(row);
                 });
                 M.updateTextFields();
             });
@@ -100,8 +130,36 @@ $('#account-type').formSelect({
         onCloseEnd: () => {
             setTimeout(() => {
                 setupSpecificProfile(M.FormSelect.getInstance($('#account-type')[0]).input.value);
-
             }, 100);
         }
     }
+}); // It's a special dropdown
+
+let ticking = false;
+addEventListener('scroll', e => {
+    ticking = true;
+    if (ticking) {
+        requestAnimationFrame(() => {
+            $('#member-table').find('thead')
+                .css('fixed');
+            ticking = false;
+        });
+    }
 });
+
+String.prototype.toTitleCase = function() {
+    const str = this.toLowerCase().split(' ');
+    for (let i = 0; i < str.length; i++) {
+        str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
+    }
+    return str.join(' ');
+};
+
+window.columns = Math.min(Math.floor((innerWidth - 64) / 200), 9); // Oooh big boy math, columns should be over 200px
+window.columnWidth = Math.floor(innerWidth - 64) / columns;
+window.tableOrder = ['name', 'email', 'cell-phone', 'home-phone', 'preferred-contact', 'address'];
+const row = $('<tr>');
+for (let i = 0; i < columns; i++) {
+    row.append($('<th>').text(tableOrder[i].replace('-', ' ').toTitleCase()).width(columnWidth));
+}
+$('#member-table').find('thead').append(row);

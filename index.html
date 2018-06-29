@@ -42,6 +42,7 @@
                             <input disabled id="name" type="text">
                             <label for="name">Name</label>
                         </div>
+                        <input id="photo-url" type="hidden">
                         <div class="input-field">
                             <select id="gender">
                                 <option value="male">Male</option>
@@ -111,8 +112,13 @@
                     </form>
                 </div>
             </div>
-            <div class="page">
-                <div id="members"></div>
+            <div class="page" style="left: 100vw; margin-top: -64px">
+                <div id="members">
+                    <table class="striped" id="member-table">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div id="profile-modal" class="modal">
