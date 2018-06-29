@@ -7,7 +7,11 @@ body {
 }
 
 .input-field {
-    margin: 32px 0;
+    -webkit-transition: margin-top 400ms;
+    -moz-transition: margin-top 400ms;
+    -ms-transition: margin-top 400ms;
+    -o-transition: margin-top 400ms;
+    transition: margin-top 400ms;
 }
 
 .page {
@@ -36,8 +40,4 @@ body {
 
 #profile-modal {
     padding: 64px;
-}
-
-#search {
-    padding-left: 4rem;
 }

@@ -8,16 +8,18 @@
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+        <link rel="stylesheet" href="css/compact.css">
+        <link rel="stylesheet" href="css/cozy.css">
         <link rel="stylesheet" href="css/index.css">
         <link rel="stylesheet" href="css/navbar.css">
         <title>Lynbrook Robotics Member System</title>
     </head>
-    <body>
+    <body class="cozy">
         <div class="navbar-fixed">
             <nav class="darken-2 nav-extended yellow">
                 <div class="nav-wrapper">
-                    <a class="brand-logo hide-on-small-and-down">Lynbrook Robotics</a>
-                    <a href="#" data-target="hamburger-menu" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                    <a class="brand-logo hide-on-med-and-down">Lynbrook Robotics</a>
+                    <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                     <ul class="right">
                         <li><a class="black-text btn darken-3 waves-effect white" id="compact-toggle">Compact</a></li>
                         <li><a class="black-text btn darken-3 waves-effect white" id="auth-toggle">Sign In</a></li>
@@ -31,13 +33,17 @@
                 </div>
             </nav>
         </div>
+        <ul id="slide-out" class="sidenav">
+            <li><a data-page="0" class="subpage-link">My Profile</a></li>
+            <li><a data-page="1" class="subpage-link">Members</a></li>
+        </ul>
         <div class="content-container">
             <div class="page">
                 <div class="container">
                     <div style="display: none;" id="progress" class="yellow lighten-4 progress">
                         <div class="indeterminate yellow"></div>
                     </div>
-                    <form id="my-profile">
+                    <form hidden id="my-profile">
                         <input id="uid" type="hidden">
                         <div class="input-field">
                             <input disabled id="name" type="text">
@@ -119,7 +125,7 @@
                     </form>
                 </div>
             </div>
-            <div id="member-page" class="page" style="left: 100vw; margin-top: -32px">
+            <div hidden id="member-page" class="page">
                 <div id="members">
                     <table class="striped" id="member-table">
                         <thead></thead>
