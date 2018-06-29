@@ -37,3 +37,7 @@ body {
 #profile-modal {
     padding: 64px;
 }
+
+#search {
+    padding-left: 4rem;
+}
