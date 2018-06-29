@@ -96,7 +96,7 @@ BEGIN:VCARD
 VERSION:3.0
 FN:${profile.name}
 ORG:${profile['place-of-employment']}
-LOGO;VALUE=URI:${profile['photo-url']}
+PHOTO;VALUE=URI:${profile['photo-url']}
 TEL;TYPE=WORK,VOICE:${profile['cell-phone']}
 TEL;TYPE=HOME,VOICE:${profile['home-phone']}
 ADR;TYPE=HOME:;;${profile.address};San Jose;CA;95129;United States of America
@@ -185,3 +185,29 @@ for (let i = 0; i < columns; i++) {
     row.append($('<th>').text(tableOrder[i].replace('-', ' ').toTitleCase()).width(columnWidth));
 }
 $('#member-table').find('thead').append(row);
+
+window.compact = false;
+window.$compact = $('#compact-toggle').click(e => {
+    if (compact) {
+        showExtendedNavbar();
+        $('.input-field').animate({
+            marginBottom: 32,
+            marginTop: 32
+        });
+        $('#member-page').animate({
+            marginTop: -32
+        });
+        $compact.text('Compact');
+    } else {
+        showExtendedNavbar(false);
+        $('.input-field').animate({
+            marginBottom: 16,
+            marginTop: 16
+        });
+        $('#member-page').animate({
+            marginTop: -64
+        });
+        $compact.text('Cozy');
+    }
+    compact = !compact
+});
