@@ -24,19 +24,105 @@
                 </div>
                 <div class="nav-content" hidden>
                     <ul class="hide-on-small-and-down tabs tabs-transparent">
-                        <li class="tab"><a class="active">My Profile</a></li>
-                        <li class="tab"><a>Members</a></li>
+                        <li class="tab"><a data-page="0" class="subpage-link active">My Profile</a></li>
+                        <li class="tab"><a data-page="1" class="subpage-link">Members</a></li>
                     </ul>
                 </div>
             </nav>
         </div>
         <div class="content-container">
             <div class="page">
-                <div class="container" id="my-profile"></div>
+                <div class="container">
+                    <div style="display: none;" id="progress" class="yellow lighten-4 progress">
+                        <div class="indeterminate yellow"></div>
+                    </div>
+                    <form id="my-profile">
+                        <input id="uid" type="hidden">
+                        <div class="input-field">
+                            <input disabled id="name" type="text">
+                            <label for="name">Name</label>
+                        </div>
+                        <input id="photo-url" type="hidden">
+                        <div class="input-field">
+                            <select id="gender">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <label for="gender">Gender</label>
+                        </div>
+                        <div class="input-field">
+                            <input class="validate" data-example="+1(408)-555-5555" pattern="(\+1)?\(?\d{3}\)?[ -]?\d{3}[ -]?\d{4}" id="cell-phone" type="tel">
+                            <label for="cell-phone">Cell Phone</label>
+                        </div>
+                        <div class="input-field">
+                            <input class="validate" data-example="+1(408)-555-5555" pattern="(\+1)?\(?\d{3}\)?[ -]?\d{3}[ -]?\d{4}" id="home-phone" type="tel">
+                            <label for="home-phone">Home Phone</label>
+                        </div>
+                        <div class="input-field">
+                            <input class="validate" data-example="team846@lynbrookrobotics.com" id="email" type="email">
+                            <label for="email">Email</label>
+                        </div>
+                        <div class="input-field">
+                            <select id="preferred-contact">
+                                <option value="email">Email</option>
+                                <option value="cell-phone">Cell Phone</option>
+                                <option value="home-phone">Home Phone</option>
+                            </select>
+                            <label for="preferred-contact">Preferred Contact Method</label>
+                        </div>
+                        <div class="input-field">
+                            <input class="validate" data-example="1280 Johnson Ave." id="address" pattern="\d{3,} (?:\w+[ .])+" type="text">
+                            <label for="address">Address</label>
+                        </div>
+                        <div class="input-field">
+                            <select class="validate" id="account-type">
+                                <option>Student</option>
+                                <option>Adult</option>
+                            </select>
+                            <label for="account-type">Account Type</label>
+                        </div>
+                        <div id="student-profile">
+                            <div class="input-field">
+                                <select id="graduation-year">
+                                    <option>0000</option>
+                                    <option>0001</option>
+                                    <option>0002</option>
+                                    <option>0003</option>
+                                    <option>0004</option>
+                                </select>
+                                <label for="graduation-year">Graduation Year</label>
+                            </div>
+                        </div>
+                        <div hidden id="adult-profile">
+                            <div class="input-field">
+                                <select id="employment">
+                                    <option value="full-time">Full Time</option>
+                                    <option value="full-time">Part Time</option>
+                                    <option value="full-time">Unemployed</option>
+                                </select>
+                                <label for="employment">Employment</label>
+                            </div>
+                            <div class="input-field">
+                                <input id="place-of-employment" type="text">
+                                <label for="place-of-employment">Company</label>
+                            </div>
+                        </div>
+                        <input class="darken-2 yellow btn" value="Update" type="submit">
+                    </form>
+                </div>
             </div>
-            <div class="page">
-                <div class="container" id="members"></div>
+            <div class="page" style="left: 100vw; margin-top: -64px">
+                <div id="members">
+                    <table class="striped" id="member-table">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
+        </div>
+        <div id="profile-modal" class="modal">
+            <div class="modal-content"></div>
         </div>
         <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-auth.js"></script>

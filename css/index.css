@@ -16,3 +16,24 @@ body {
     top: 0;
     width: 100vw;
 }
+
+#member-table {
+    width: calc(100vw - 64px);
+}
+
+#member-table > thead {
+    display: block;
+    width: calc(100vw - 64px);
+    overflow: auto;
+}
+
+#member-table > tbody {
+    display: block;
+    width: calc(100vw - 64px);
+    height: calc(100vh - 110px);
+    overflow: auto;
+}
+
+#profile-modal {
+    padding: 64px;
+}
