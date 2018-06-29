@@ -51,7 +51,10 @@ function switchToPage(pageNumber) {
     return new Promise(function(resolve, reject) {
         const $page = $('.page');
         $page.fadeOut(() => {
-            $($page[pageNumber]).fadeIn(resolve);
+            $($page[pageNumber]).fadeIn(() => {
+                $('#slide-out').sidenav('close');
+                resolve();
+            });
         });
     });
 }
