@@ -91,19 +91,19 @@ EMAIL:${profile.email}
 END:VCARD`;
 }
 
-function searchMembers(string) {
-    const matchedProfiles = [];
-    users.then(collection => {
-        collection.forEach(doc => {
-            const profile = doc.data();
-            const excluded = ['photo-url', 'uid'];
-            if (Object.keys(profile)
-                .filter(it => excluded.indexOf(it) === -1)
-                .map(key => profile[key])
-                .some(value => value.includes(string))) {
-                matchedProfiles.push(profile);
-            }
-        });
+async function searchMembers(string) {
+    let matchedProfiles = [];
+    const collection = await users;
+    collection.forEach(doc => {
+        const profile = doc.data();
+        const excluded = ['photo-url', 'uid'];
+        if (Object.keys(profile)
+            .filter(it => excluded.indexOf(it) === -1)
+            .map(key => profile[key])
+            .some(value => value.toLowerCase().includes(string.toLowerCase()))) {
+            matchedProfiles.push(profile);
+            console.log('ayyy');
+        }
     });
     return matchedProfiles;
 }

@@ -26,6 +26,7 @@ const configurations = {
 
 switch (location.hostname) {
     case 'localhost':
+        console.log('Using Development configuration');
         firebase.initializeApp(configurations.development);
         break;
     default:

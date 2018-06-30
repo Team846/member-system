@@ -38,6 +38,24 @@
     });
 })(); // Setup the compact / cozy toggle
 
+(() => {
+    let $search = $('#search').focusin(e => {
+        $search.animate({
+            maxWidth: '100vw'
+        });
+    }).focusout(e => {
+        $search.animate({
+            maxWidth: '0'
+        });
+    }).keyup(async e => {
+        let members = await searchMembers($search.val());
+        $('#member-table').find('tbody').empty();
+        members.map(createUserEntryFrom).forEach(it => {
+            $('#member-table').find('tbody').append(it);
+        });
+    });
+})(); // Setup the search box
+
 $('#profile-modal').modal({
     onCloseEnd: () => {
         document.body.style.overflowY = 'hidden';

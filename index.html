@@ -21,6 +21,15 @@
                     <a class="brand-logo hide-on-med-and-down">Lynbrook Robotics</a>
                     <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                     <ul class="right">
+                        <li style="padding: 0; margin-top: 16px;">
+                            <div class="input-field" style="margin: 0;">
+                                <input style="max-width: 0; padding: 0 36px; height: 36px;" id="search" type="search"
+                                       required>
+                                <label class="label-icon" for="search" style="left: 0.5rem;">
+                                    <i style="height: 36px; line-height: 36px; font-size: 16px;" class="material-icons">search</i>
+                                </label>
+                            </div>
+                        </li>
                         <li><a class="black-text btn darken-3 waves-effect white" id="compact-toggle">Compact</a></li>
                         <li><a class="black-text btn darken-3 waves-effect white" id="auth-toggle">Sign In</a></li>
                     </ul>
@@ -85,7 +94,8 @@
                             <label for="preferred-contact">Preferred Contact Method</label>
                         </div>
                         <div class="input-field">
-                            <input class="validate" data-example="1280 Johnson Ave." id="address" pattern="\d{3,} (?:\w+[ .]?)+" type="text">
+                            <input class="validate" data-example="1280 Johnson Ave." id="address"
+                                   pattern="\d{3,} (?:\w+[ .]?)+" type="text">
                             <label for="address">Address</label>
                         </div>
                         <div class="input-field">
