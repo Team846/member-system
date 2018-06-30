@@ -81,7 +81,7 @@ firebase.auth()['onAuthStateChanged'](async (user) => {
             break;
         default:
             $authToggle.text('Sign Out');
-            let users = firebase.firestore().collection('users').get();
+            window.users = firebase.firestore().collection('users').get();
             await showExtendedNavbar();
             $progress.fadeIn();
             $('#name').val(user.displayName);
@@ -111,7 +111,7 @@ firebase.auth()['onAuthStateChanged'](async (user) => {
                     });
             }).slideDown();
             M.updateTextFields();
-            users.then(collection => {
+            window.users.then(collection => {
                 $progress.fadeOut();
                 collection.forEach(doc => {
                     const profile = doc.data();
@@ -127,40 +127,9 @@ firebase.auth()['onAuthStateChanged'](async (user) => {
                                     $input.val(profile[key]);
                                 }
                             });
-                        } catch (e) {
-                        }
+                        } catch (e) {}
                     }
-                    let row = $('<tr>');
-                    for (let i = 0; i < columns; i++) {
-                        row.append($('<td>').text(profile[tableOrder[i]]).width(columnWidth));
-                    }
-                    row.click(() => {
-                        const tBody = $('<tbody>');
-                        Object.keys(profile).forEach(key => {
-                            if (key === 'uid' || key === 'photo-url') return;
-                            tBody.append($('<tr>')
-                                .append($('<td>').text(key.replace(/-/g, ' ').toTitleCase()))
-                                .append($('<td>').text(profile[key])))
-                        });
-
-                        $('#profile-modal')
-                            .empty()
-                            .append($(`<img class="left" src="${profile['photo-url']}">`)
-                                .width(128)
-                                .height(128)
-                                .css('margin-right', '32px')
-                                .css('border-radius', '50%'))
-                            .append($('<h3>').text(profile['name']))
-                            .append($('<h4>').text(profile['email']))
-                            .append($('<table>').append(tBody))
-                            .append($('<button class="btn darken-2 yellow waves-effect">')
-                                .html('Download<i class="right material-icons">cloud_download</i>')
-                                .css('margin', '16px')
-                                .click(() => {
-                                    download(`${profile.uid}.vcf`, vCardFromProfile(profile));
-                                }))
-                            .modal('open');
-                    });
+                    let row = createUserEntryFrom(profile);
                     $('#member-table').find('tbody').append(row);
                 });
                 M.updateTextFields();

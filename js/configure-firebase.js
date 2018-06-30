@@ -11,7 +11,7 @@ const configurations = {
         authDomain: "funky-monkeys-dev.firebaseapp.com",
         databaseURL: "https://funky-monkeys-dev.firebaseio.com",
         projectId: "funky-monkeys-dev",
-        storageBucket: "",
+        storageBucket: "funky-monkeys-dev.appspot.com",
         messagingSenderId: "1042082599999"
     },
     production: {
