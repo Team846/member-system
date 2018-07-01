@@ -48,13 +48,20 @@
             maxWidth: '0'
         });
     }).keyup(async e => {
-        let members = await searchMembers($search.val());
+        let members = window.filteredMembers = await searchMembers($search.val());
         $('#member-table').find('tbody').empty();
         members.map(createUserEntryFrom).forEach(it => {
             $('#member-table').find('tbody').append(it);
         });
-    });
+    }).val('');
 })(); // Setup the search box
+
+(() => {
+    $('#download-all').click(() => {
+        if (!window.filteredMembers) return;
+        download($('#search').val() || 'members.vcf', filteredMembers.map(vCardFromProfile).join('\n'));
+    });
+})(); // Setup the download all button
 
 $('#profile-modal').modal({
     onCloseEnd: () => {
@@ -131,6 +138,7 @@ firebase.auth()['onAuthStateChanged'](async (user) => {
             M.updateTextFields();
             window.users.then(collection => {
                 $progress.fadeOut();
+                window.filteredMembers = collection.docs.map(doc => doc.data());
                 collection.forEach(doc => {
                     const profile = doc.data();
                     if (profile.uid === user.uid) {
