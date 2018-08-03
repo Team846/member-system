@@ -1,0 +1,8 @@
+.ProfileEditor {
+    padding: 32px;
+    margin-top: 64px;
+}
+
+.ProfileEditor .submit-button {
+    margin-top: 8px;
+}

@@ -1,10 +1,13 @@
-/*
- * If the code is running in localhost, use the development app,
- * otherwise, switch to the production app.
- *
- * TODO: Procure a configuration for the production application
- */
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import registerServiceWorker, {isLocalhost} from './registerServiceWorker';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
 
+// noinspection SpellCheckingInspection
 const configurations = {
     development: {
         apiKey: "AIzaSyBcy4SX9wJMpF6ZNrUsd5kpJalbMcq19S4",
@@ -24,16 +27,12 @@ const configurations = {
     }
 };
 
-switch (location.hostname) {
-    case 'localhost':
-        console.log('Using Development configuration');
-        firebase.initializeApp(configurations.development);
-        break;
-    default:
-        firebase.initializeApp(configurations.production);
-        break;
-}
+// firebase.initializeApp(configurations[isLocalhost ? 'development' : 'production']);
+firebase.initializeApp(configurations['development']);
 
 firebase.firestore().settings({
-    timestampsInSnapshots: true
-}); // Prevent the warnings from Firestore - we have no need for timestamps in our snapshots
+    timestampsInSnapshots: true,
+});
+
+ReactDOM.render(<App/>, document.getElementById('root'));
+registerServiceWorker();

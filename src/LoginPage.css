@@ -1,0 +1,11 @@
+.LoginPage {
+    align-items: center;
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    width: 100vw;
+}
+
+.LoginPage button {
+    margin-top: 16px;
+}

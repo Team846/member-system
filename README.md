@@ -1,30 +1,31 @@
-# Member System
+# Lynbrook Robotics Member System
 
-To get started working on this repository, clone it from GitHub
+### Developing
+To start the development server, run either of the following
+ commands. Note that you will need Node.js to develop.
 ~~~
-git clone https://github.com/Team846/member-system.git
-~~~
-
-After cloning, your going to want to be able to see the changes you make.
-We will use Python for that. Run either of the following commands:
-~~~
-python2 -m SimpleHTTPServer
-python3 -m http.server
+npm start
+yarn start
 ~~~
 
-Now, you should be able to navigate to <a>http://localhost:80</a>, and see
-the website running in your browser. The python server will automatically
-serve updated files on a new request, unlike serve, or other servers.
+### Deploying
 
-From here on out, just branch out.
+To build & bundle the app, run one of the following commands:
 ~~~
-git branch my-feature
-git checkout my-feature
+npm run build
+yarn build
 ~~~
 
-And when you're ready, push
-~~~
-git add . # Register any new files with Git
-git commit -m "Describe your changes here"
-git push
-~~~
+You will then be able to push the generated code to the 
+`gh-pages` branch, so that it can be served by GitHub Pages
+
+## Notes
+1. We use the ES6 arrow function syntax so that the functions will
+ be automatically binded to the class.
+
+2. Nested classes refer to the parent class inside arrow
+ functions. However, in a normally declared function, like
+ render(), you will get the expected behavior.
+ 
+3. If your code does not use the arrow function syntax, you
+ will have to remember to bind it in your JSX.
