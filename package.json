@@ -14,6 +14,7 @@
     "firebase": "^5.3.0",
     "react-input-mask": "^2.0.2"
   },
+  "homepage": "https://lynbrookrobotics.com/member-system",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
