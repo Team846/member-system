@@ -27,8 +27,8 @@ const configurations = {
     }
 };
 
-// firebase.initializeApp(configurations[isLocalhost ? 'development' : 'production']);
-firebase.initializeApp(configurations['development']);
+firebase.initializeApp(configurations[isLocalhost ? 'development' : 'production']);
+// firebase.initializeApp(configurations['development']);
 
 firebase.firestore().settings({
     timestampsInSnapshots: true,
