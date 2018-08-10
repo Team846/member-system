@@ -27,7 +27,6 @@ export const theme = createMuiTheme({
 class App extends Component {
     constructor(props) {
         super(props);
-        let Profile = null;
         this.state = {
             content: <MemberCards/>,
             loggedIn: true,
@@ -38,13 +37,13 @@ class App extends Component {
                     return <MemberCards/>
                 }
             }, {
+                component: null,
                 label: "Profile Editor",
                 async tab() {
-                    if (!Profile) {
-                        Profile = (await import(/* webpackChunkName: "profile" */"./Profile")).default
+                    if (!this.component) {
+                        this.component = (await import(/* webpackChunkName: "profile" */"./Profile")).default
                     }
-                    console.log(Profile);
-                    return <Profile/>
+                    return <this.component/>
                 }
             }]
         };
