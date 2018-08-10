@@ -11,6 +11,7 @@
         "react-input-mask": "^2.0.3",
         "react-scripts": "1.1.4"
     },
+    "homepage": "http://lynbrookrobotics.com/member-system",
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
