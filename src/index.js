@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 import registerServiceWorker, {isLocalhost} from './registerServiceWorker';
 import firebase from 'firebase/app';
@@ -10,28 +9,27 @@ import 'firebase/firestore';
 // noinspection SpellCheckingInspection
 const configurations = {
     development: {
-        apiKey: "AIzaSyBcy4SX9wJMpF6ZNrUsd5kpJalbMcq19S4",
-        authDomain: "funky-monkeys-dev.firebaseapp.com",
-        databaseURL: "https://funky-monkeys-dev.firebaseio.com",
-        projectId: "funky-monkeys-dev",
-        storageBucket: "funky-monkeys-dev.appspot.com",
-        messagingSenderId: "1042082599999"
+        apiKey: "AIzaSyA_1zO62l-Vba_eLyOFXFNn4oukLLQmijM",
+        authDomain: "staged-member-system.firebaseapp.com",
+        databaseURL: "https://staged-member-system.firebaseio.com",
+        projectId: "staged-member-system",
+        storageBucket: "staged-member-system.appspot.com",
+        messagingSenderId: "517864814039"
     },
     production: {
-        apiKey: "AIzaSyB1Ky0rDdrXzjD9Xl2huO9AbsixHQzSgNI",
-        authDomain: "funky-member-system.firebaseapp.com",
-        databaseURL: "https://funky-member-system.firebaseio.com",
-        projectId: "funky-member-system",
-        storageBucket: "funky-member-system.appspot.com",
-        messagingSenderId: "1005314456770"
+        apiKey: "AIzaSyA_1zO62l-Vba_eLyOFXFNn4oukLLQmijM",
+        authDomain: "staged-member-system.firebaseapp.com",
+        databaseURL: "https://staged-member-system.firebaseio.com",
+        projectId: "staged-member-system",
+        storageBucket: "staged-member-system.appspot.com",
+        messagingSenderId: "517864814039"
     }
 };
 
 firebase.initializeApp(configurations[isLocalhost ? 'development' : 'production']);
-// firebase.initializeApp(configurations['development']);
 
 firebase.firestore().settings({
-    timestampsInSnapshots: true,
+    timestampsInSnapshots: true
 });
 
 ReactDOM.render(<App/>, document.getElementById('root'));

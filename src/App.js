@@ -1,63 +1,114 @@
 import React, {Component} from 'react';
+import {
+    AppBar,
+    CssBaseline,
+    Drawer,
+    IconButton,
+    List,
+    ListItem,
+    ListItemText,
+    Toolbar,
+    Typography
+} from '@material-ui/core';
+import {createMuiTheme, MuiThemeProvider, withStyles} from '@material-ui/core/styles';
+import {red} from '@material-ui/core/colors';
+import {Menu} from '@material-ui/icons';
 import './App.css';
-import {AppBar, Button, CssBaseline, Toolbar, Typography} from '@material-ui/core';
-import {blue} from '@material-ui/core/colors';
-import {createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
 import firebase from 'firebase/app';
-import LoginPage from "./LoginPage";
-import ProfileEditor from "./ProfileEditor";
 import MemberCards from "./MemberCards";
+import Login from "./Login";
+
+export const theme = createMuiTheme({
+    palette: {
+        primary: red
+    }
+});
 
 class App extends Component {
+    constructor(props) {
+        super(props);
+        let Profile = null;
+        this.state = {
+            content: <MemberCards/>,
+            loggedIn: true,
+            menuOpen: false,
+            tabs: [{
+                label: "Members",
+                async tab() {
+                    return <MemberCards/>
+                }
+            }, {
+                label: "Profile Editor",
+                async tab() {
+                    if (!Profile) {
+                        Profile = (await import(/* webpackChunkName: "profile" */"./Profile")).default
+                    }
+                    console.log(Profile);
+                    return <Profile/>
+                }
+            }]
+        };
+    }
+
     componentDidMount() {
-        firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
-        firebase.firestore().collection('users').onSnapshot(snapshot => {
+        firebase.auth().onAuthStateChanged(user => {
             this.setState({
-                users: snapshot.docs.map(doc => doc.data())
+                loggedIn: user !== null
             });
         });
-    };
-
-    onAuthStateChanged = user => {
-        this.setState({user})
-    };
-
-    signOut = () => {
-        // noinspection JSIgnoredPromiseFromCall
-        firebase.auth().signOut();
-    };
-
-    state = {
-        user: null
-    };
-
-    theme = createMuiTheme({
-        palette: {
-            primary: blue
-        }
-    });
+    }
 
     render() {
-        const {user, users} = this.state;
+        const {classes} = this.props;
+
         return (
-            <CssBaseline>
-                <MuiThemeProvider theme={this.theme}>
+            <MuiThemeProvider
+                theme={theme}>
+                <CssBaseline>
                     <AppBar>
                         <Toolbar>
-                            <Typography className={"grow"} color={"inherit"} variant={"title"}>
-                                Member System
-                            </Typography>
-                            {user &&
-                            <Button color={"inherit"} onClick={this.signOut}>Sign Out</Button>}
+                            <IconButton className={classes.menuIcon} color={"inherit"} onClick={() => this.setState({
+                                menuOpen: !this.state.menuOpen
+                            })}>
+                                <Menu/>
+                            </IconButton>
+                            <Typography color={"inherit"} variant={"title"}>Member System</Typography>
                         </Toolbar>
                     </AppBar>
-                    {!user && <LoginPage/>}
-                    {user && users && <ProfileEditor user={user} users={users}/>}
-                    {user && users && <MemberCards users={users}/>}
-                </MuiThemeProvider>
-            </CssBaseline>
+                    <Drawer
+                        open={this.state.menuOpen}
+                        onClose={() => this.setState({
+                            menuOpen: false
+                        })}>
+                        <List className={"list"} onClick={() => this.setState({
+                            menuOpen: false
+                        })}>
+                            {this.state.tabs.map(tab => {
+                                return <ListItem button onClick={() => {
+                                    tab.tab().then(tab => {
+                                        this.setState({
+                                            content: tab
+                                        });
+                                    })
+                                }}>
+                                    <ListItemText primary={tab.label}/>
+                                </ListItem>
+                            })}
+                        </List>
+                    </Drawer>
+                    <div className={"content"}>
+                        {!this.state.loggedIn && <Login/>}
+                        {this.state.loggedIn && this.state.content}
+                    </div>
+                </CssBaseline>
+            </MuiThemeProvider>
         );
     }
 }
 
-export default App;
+export default withStyles({
+    menuIcon: {
+        marginLeft: -12,
+        marginRight: 20
+    }
+})(App);

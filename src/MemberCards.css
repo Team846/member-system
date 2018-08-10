@@ -1,34 +1,16 @@
 .MemberCards {
-    margin-top: 64px;
-    padding: 30px;
+    padding: 16px;
 }
 
-.MemberCards .bold {
-    font-weight: bold;
-}
-
-.MemberCards .cards {
-    margin-top: 16px;
-}
-
-.MemberCards .card-body tr td:first-child {
-    padding-right: 4px;
-    width: 30px;
-}
-
-.MemberCards .icon {
-    margin-top: 16px;
-}
-
-.details {
-    max-height: 100vh;
-    padding: 30px;
-    pointer-events: all;
-    overflow-y: auto;
-}
-
-.backdrop-grid {
+.modal-grid {
     height: 100vh;
     pointer-events: none;
-    z-index: -1000;
+}
+
+.modal-grid div {
+    pointer-events: all;
+}
+
+.modal-paper {
+    padding: 32px;
 }

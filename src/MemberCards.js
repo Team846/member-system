@@ -1,67 +1,45 @@
 import React, {Component} from 'react';
-import './MemberCards.css';
 import {
     Card,
     CardContent,
-    FormControl,
+    Checkbox,
     Grid,
     IconButton,
-    InputLabel,
-    MenuItem,
     Modal,
     Paper,
-    Select,
     Table,
     TableBody,
-    TableCell,
     TableRow,
-    TextField,
+    TableCell,
     Typography
 } from '@material-ui/core';
-import {Mail, Phone} from '@material-ui/icons';
+import './MemberCards.css';
+import firebase from 'firebase/app'
+import {Home, Info, Mail, Phone, Wc} from '@material-ui/icons';
 
 class MemberCard extends Component {
     render() {
         return (
-            <Grid item xs={12} md={4} lg={3}>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
                 <Card>
-                    <CardContent onClick={this.props.onClick}>
-                        <Typography variant={"headline"}>
-                            {this.props.user.name}
-                        </Typography>
-                        <Typography variant={"subheading"}>
-                            {this.props.user.team.toUpperCase()} ({this.props.user.graduation || ''})
-                        </Typography>
-                        <Table>
-                            <TableBody className={"card-body"}>
-                                <TableRow>
-                                    <TableCell><Mail/></TableCell>
-                                    <TableCell>
-                                        <a href={`mailto:${this.props.user.email}`}>{this.props.user.email}</a>
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell><Phone/></TableCell>
-                                    <TableCell className={this.props.user.primary === "cell" ? "bold" : ""}>
-                                        <a href={`tel:${this.props.user.cell}`}>Cell: {this.props.user.cell}</a>
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell><Phone/></TableCell>
-                                    <TableCell className={this.props.user.primary === "home" ? "bold" : ""}>
-                                        <a href={`tel:${this.props.user.home}`}>Home: {this.props.user.home}</a>
-                                    </TableCell>
-                                </TableRow>
-                                {/*<TableRow>*/}
-                                {/*<TableCell><Home/></TableCell>*/}
-                                {/*<TableCell>*/}
-                                {/*<a*/}
-                                {/*href={`https://google.com/maps/search/${this.props.user.address}`}>*/}
-                                {/*{this.props.user.address}, CA 95129</a>*/}
-                                {/*</TableCell>*/}
-                                {/*</TableRow>*/}
-                            </TableBody>
-                        </Table>
+                    <CardContent>
+                        <Typography variant={"headline"}>{this.props.user.name} ({this.props.user.role})</Typography>
+                        <Checkbox
+                            checked={this.props.selected}
+                            onChange={this.props.onChange}/>
+                        <a href={`mailto:${this.props.user.email}`}>
+                            <IconButton>
+                                <Mail/>
+                            </IconButton>
+                        </a>
+                        <a href={`tel:${this.props.user[this.props.user.phone === 'Cell Phone' ? 'cell' : 'home']}`}>
+                            <IconButton>
+                                <Phone/>
+                            </IconButton>
+                        </a>
+                        <IconButton onClick={this.props.onInfoClicked}>
+                            <Info/>
+                        </IconButton>
                     </CardContent>
                 </Card>
             </Grid>
@@ -69,142 +47,105 @@ class MemberCard extends Component {
     }
 }
 
-export default class MemberCards extends Component {
+class MemberCards extends Component {
+    componentDidMount() {
+        firebase.firestore().collection('users').onSnapshot(snapshot => {
+            this.setState({
+                users: snapshot.docs.map(doc => doc.data())
+            });
+        });
+    }
+
     constructor(props) {
         super(props);
         this.state = {
-            filter: '',
-            'filter-by': 'any',
-            modalOpen: false,
-            user: null
-        };
-
-        class SyncedTextField extends Component {
-            onChange(event) {
-                this.memberCards.setState({
-                    [this.props.name]: event.target.value
-                });
-            };
-
-            memberCards = this;
-
-            render() {
-                return <TextField
-                    fullWidth
-                    margin={"dense"}
-                    {...this.props}
-                    onChange={this.onChange.bind(this)}
-                    value={this.memberCards.state[this.props.name] || ''}/>;
-            }
+            modal: {
+                open: false,
+                uid: null
+            },
+            selectedUsers: [],
+            users: []
         }
-
-        class SyncedSelect extends Component {
-            onChange(event) {
-                this.memberCards.setState({
-                    [this.props.name]: event.target.value
-                });
-            }
-
-            memberCards = this;
-
-            render() {
-                return <FormControl fullWidth margin={"dense"}>
-                    <InputLabel htmlFor={this.props.name}>{this.props.label}</InputLabel>
-                    <Select
-                        inputProps={{
-                            id: this.props.name
-                        }}
-                        onChange={this.onChange.bind(this)}
-                        value={this.memberCards.state[this.props.name] || ''}>
-                        {this.props.children}
-                    </Select>
-                </FormControl>;
-            }
-        }
-
-        this.SyncedSelect = SyncedSelect;
-        this.SyncedTextField = SyncedTextField;
     }
 
-    closeModal = () => {
+    openModal = uid => () => {
         this.setState({
-            modalOpen: false,
-            user: null
-        });
+            modal: {
+                open: true,
+                uid
+            }
+        })
     };
 
-    onCardClicked = user => () => {
-        this.setState({
-            modalOpen: true,
-            user
-        });
+    onSelectClicked = uid => e => {
+        const selected = this.state.selectedUsers.slice(0);
+        if (e.target.checked) {
+            selected.push(uid);
+            this.setState({
+                selectedUsers: selected
+            });
+        } else {
+            selected.splice(selected.indexOf(uid), 1);
+            this.setState({
+                selectedUsers: selected
+            });
+        }
     };
 
     render() {
-        const {SyncedSelect, SyncedTextField} = this;
-
+        let user = this.state.users.find(user => user.uid === this.state.modal.uid);
         return (
             <div className={"MemberCards"}>
-                <Grid container spacing={8}>
-                    <Grid item xs={12} md={3}>
-                        <SyncedSelect
-                            label={"Filter By"}
-                            name={"filter-by"}>
-                            <MenuItem value={"any"}>Any</MenuItem>
-                            <MenuItem value={"name"}>Name</MenuItem>
-                            <MenuItem value={"gender"}>Gender</MenuItem>
-                            <MenuItem value={"email"}>Email</MenuItem>
-                            <MenuItem value={"team"}>Team</MenuItem>
-                            <MenuItem value={"role"}>Role</MenuItem>
-                            <MenuItem value={"graduation"}>Graduation Year</MenuItem>
-                        </SyncedSelect>
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                        <SyncedTextField
-                            label={"Filter Text"}
-                            name={"filter"}/>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <IconButton className={"icon"}>
-
-                        </IconButton>
-                    </Grid>
+                <Grid container spacing={16}>
+                    {this.state.users.map(user => <MemberCard
+                        key={user}
+                        onInfoClicked={this.openModal(user.uid)}
+                        onChange={this.onSelectClicked(user.uid)}
+                        selected={this.state.selectedUsers.indexOf(user.uid) !== -1}
+                        user={user}/>)}
                 </Grid>
-                <Grid className={"cards"} container spacing={16}>
-                    {this.props.users
-                        .filter(user => {
-                            if (this.state['filter-by'] === 'any') {
-                                return Object.keys(user)
-                                    .filter(key => ['uid', 'cell', 'home'].indexOf(key) === -1)
-                                    .map(key => user[key])
-                                    .some(value => String(value).includes(this.state.filter));
-                            } else {
-                                return user[this.state['filter-by']].includes(this.state.filter)
-                            }
-                        })
-                        .map(user => <MemberCard key={user.uid} onClick={this.onCardClicked(user)} user={user}/>)}
-                </Grid>
-                {this.state.user && <Modal
-                    onClose={this.closeModal}
-                    open={this.state.modalOpen}>
-                    <Grid alignItems={"center"} container justify={"center"} className={"backdrop-grid"}>
+                {this.state.modal.open === true && <Modal
+                    onClose={() => this.setState({
+                        modal: {
+                            open: false,
+                            uid: null
+                        }
+                    })}
+                    open={this.state.modal.open}>
+                    <Grid className={"modal-grid"} alignItems={"center"} container justify={"center"}>
                         <Grid item xs={11} md={6}>
-                            <Paper className={"details"}>
-                                <Typography variant={"title"}>{this.state.user.name}</Typography>
+                            <Paper className={"modal-paper"}>
+                                <Typography variant={"headline"}>{user.name}</Typography>
                                 <Table>
                                     <TableBody>
-                                        {Object.keys(this.state.user)
-                                            .filter(key => ['photoURL', 'uid'].indexOf(key) === -1)
-                                            .map(key => {
-                                                return {
-                                                    key: key,
-                                                    value: String(this.state.user[key])
-                                                }
-                                            })
-                                            .map(set => <TableRow>
-                                                <TableCell>{set.key}</TableCell>
-                                                <TableCell>{set.value}</TableCell>
-                                            </TableRow>)}
+                                        <TableRow>
+                                            <TableCell><Mail/></TableCell>
+                                            <TableCell><Typography>{user.email}</Typography></TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell><Phone/></TableCell>
+                                            <TableCell><Typography>{user.cell}</Typography></TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell><Phone/></TableCell>
+                                            <TableCell><Typography>{user.home}</Typography></TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell><Home/></TableCell>
+                                            <TableCell><Typography>{user.address}</Typography></TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell><Wc/></TableCell>
+                                            <TableCell><Typography>{user.gender}</Typography></TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell>Division</TableCell>
+                                            <TableCell><Typography>{user.division}</Typography></TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell>Role</TableCell>
+                                            <TableCell><Typography>{user.role}</Typography></TableCell>
+                                        </TableRow>
                                     </TableBody>
                                 </Table>
                             </Paper>
@@ -212,6 +153,8 @@ export default class MemberCards extends Component {
                     </Grid>
                 </Modal>}
             </div>
-        )
+        );
     }
 }
+
+export default MemberCards;
