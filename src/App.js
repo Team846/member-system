@@ -29,7 +29,7 @@ class App extends Component {
         super(props);
         this.state = {
             content: <MemberCards/>,
-            loggedIn: true,
+            loggedIn: false,
             menuOpen: false,
             tabs: [{
                 label: "Members",
@@ -83,7 +83,7 @@ class App extends Component {
                             menuOpen: false
                         })}>
                             {this.state.tabs.map(tab => {
-                                return <ListItem button onClick={() => {
+                                return <ListItem button key={tab.label} onClick={() => {
                                     tab.tab().then(tab => {
                                         this.setState({
                                             content: tab
