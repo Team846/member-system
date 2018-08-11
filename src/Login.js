@@ -11,7 +11,7 @@ class Login extends Component {
             });
             const email = localStorage.getItem('email');
             if (email) {
-
+                this.signIn(email);
             } else {
                 this.setState({
                     submitButton: {
