@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
-import {Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField} from '@material-ui/core';
-import InputMask from 'react-input-mask';
+import {Button, Grid} from '@material-ui/core';
 import firebase from 'firebase/app';
+import InputGrid from "./components/InputGrid";
+import InputField from "./components/InputField";
+import SelectField from "./components/SelectField";
+import {levels} from "./settings";
 
 class Profile extends Component {
     componentDidMount() {
@@ -9,6 +12,7 @@ class Profile extends Component {
             this.setState({
                 data: Object.assign({
                     email: firebase.auth().currentUser.email,
+                    level: levels.length - 1,
                     uid: firebase.auth().currentUser.uid,
                 }, snapshot.data())
             });
@@ -62,28 +66,6 @@ class Profile extends Component {
                 text: "Update"
             }
         };
-
-        class PhoneInput extends Component {
-            render() {
-                return (
-                    <InputMask {...this.props} alwaysShowMask mask={"(999) 999-9999"} maskChar={"#"}/>
-                );
-            }
-        }
-
-        class ProfileGrid extends Component {
-            render() {
-                return (
-                    <Grid item xs={11} md={7}>
-                        {this.props.children}
-                    </Grid>
-                );
-            }
-        }
-
-        this.PhoneInput = PhoneInput;
-        // noinspection JSUnusedGlobalSymbols
-        this.ProfileGrid = ProfileGrid;
     }
 
     render() {
@@ -91,71 +73,55 @@ class Profile extends Component {
             <form onSubmit={this.updateProfile}>
                 <Grid container justify={"center"}>
                     {this.state.fields.map(field => {
-                        const
-                            filledField = Object.assign({
-                                label: "",
-                                model: "",
-                                options: [],
-                                type: "input"
-                            }, field),
-                            phoneProps = {
-                                inputComponent: this.PhoneInput,
-                                startAdornment: <InputAdornment position={"start"}>+1</InputAdornment>
-                            };
+                        field = Object.assign({
+                            label: "",
+                            model: "",
+                            options: [],
+                            type: "input"
+                        }, field);
+
                         let component = null;
-                        switch (filledField.type) {
+                        switch (field.type) {
                             case 'phone':
                             case 'input':
-                                // noinspection JSValidateTypes
                                 component =
-                                    <TextField
-                                        fullWidth
-                                        InputProps={filledField.type === "phone" ? phoneProps : undefined}
-                                        label={filledField.label}
-                                        margin={"dense"}
+                                    <InputField
+                                        label={field.label}
                                         onChange={e => this.setState({
-                                            data: {...this.state.data, [filledField.model]: e.target.value}
+                                            data: {...this.state.data, [field.model]: e.target.value}
                                         })}
-                                        value={this.state.data[filledField.model] || ''}/>;
+                                        type={field.type}
+                                        value={this.state.data[field.model] || ''}/>;
                                 break;
                             case 'select':
                                 component =
-                                    <FormControl fullWidth margin={"dense"}>
-                                        <InputLabel htmlFor={filledField.model}>{filledField.label}</InputLabel>
-                                        <Select
-                                            inputProps={{
-                                                id: filledField.model
-                                            }}
-                                            onChange={e => this.setState({
-                                                data: {
-                                                    ...this.state.data,
-                                                    [filledField.model]: e.target.value
-                                                }
-                                            })}
-                                            value={this.state.data[filledField.model] || filledField.options[0]}>
-                                            {filledField.options.map(option =>
-                                                <MenuItem key={option} value={option}>{option}</MenuItem>)}
-                                        </Select>
-                                    </FormControl>;
+                                    <SelectField
+                                        label={field.label}
+                                        model={field.model}
+                                        onChange={e => this.setState({
+                                            data: {...this.state.data, [field.model]: e.target.value}
+                                        })}
+                                        options={field.options}
+                                        value={this.state.data[field.model] || field.options[0]}/>;
                                 break;
                             default:
                                 component = null;
                                 break;
                         } // Generate the component variable
                         return (
-                            <this.ProfileGrid key={filledField.model}>
+                            <InputGrid key={field.model}>
                                 {component}
-                            </this.ProfileGrid>
+                            </InputGrid>
                         );
                     })}
-                    <this.ProfileGrid>
+                    <InputGrid>
                         <Button
                             disabled={this.state.updateButton.disabled}
                             fullWidth
                             type={"submit"}>
                             {this.state.updateButton.text}
                         </Button>
-                    </this.ProfileGrid>
+                    </InputGrid>
                 </Grid>
             </form>
         );

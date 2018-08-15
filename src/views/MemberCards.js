@@ -9,13 +9,14 @@ import {
     Paper,
     Table,
     TableBody,
-    TableRow,
     TableCell,
+    TableRow,
     Typography
 } from '@material-ui/core';
 import './MemberCards.css';
 import firebase from 'firebase/app'
-import {Home, Info, Mail, Phone, Wc} from '@material-ui/icons';
+import {Edit, Home, Info, Mail, Phone, Wc} from '@material-ui/icons';
+import {levels} from "./settings";
 
 class MemberCard extends Component {
     render() {
@@ -40,6 +41,12 @@ class MemberCard extends Component {
                         <IconButton onClick={this.props.onInfoClicked}>
                             <Info/>
                         </IconButton>
+                        {
+                            this.props.allowEdit &&
+                            <IconButton onClick={this.props.onEditClicked}>
+                                <Edit/>
+                            </IconButton>
+                        }
                     </CardContent>
                 </Card>
             </Grid>
@@ -59,6 +66,7 @@ class MemberCards extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            allowEdits: false,
             modal: {
                 open: false,
                 uid: null
@@ -67,6 +75,13 @@ class MemberCards extends Component {
             users: []
         }
     }
+
+    onEdit = uid => () => {
+        this.setState({
+            allowEdits: true
+        });
+        this.openModal(uid)()   ;
+    };
 
     openModal = uid => () => {
         this.setState({
@@ -94,11 +109,15 @@ class MemberCards extends Component {
 
     render() {
         let user = this.state.users.find(user => user.uid === this.state.modal.uid);
+        let currentUser = this.state.users.find(user => user.uid === firebase.auth().currentUser.uid) || {};
+
         return (
             <div className={"MemberCards"}>
                 <Grid container spacing={16}>
                     {this.state.users.map(user => <MemberCard
-                        key={user}
+                        allowEdit={currentUser.level === levels.indexOf('Administrator')}
+                        key={user.uid}
+                        onEditClicked={this.onEdit(user.uid)}
                         onInfoClicked={this.openModal(user.uid)}
                         onChange={this.onSelectClicked(user.uid)}
                         selected={this.state.selectedUsers.indexOf(user.uid) !== -1}
