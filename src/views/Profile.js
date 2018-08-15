@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {Button, Grid} from '@material-ui/core';
 import firebase from 'firebase/app';
-import InputGrid from "./components/InputGrid";
-import InputField from "./components/InputField";
-import SelectField from "./components/SelectField";
-import {levels} from "./settings";
+import InputGrid from "../components/InputGrid";
+import InputField from "../components/InputField";
+import SelectField from "../components/SelectField";
+import {levels} from "../settings";
 
 class Profile extends Component {
     componentDidMount() {

@@ -15,8 +15,8 @@ import {red} from '@material-ui/core/colors';
 import {Menu} from '@material-ui/icons';
 import './App.css';
 import firebase from 'firebase/app';
-import MemberCards from "./MemberCards";
-import Login from "./Login";
+import MemberCards from "./views/MemberCards";
+import Login from "./views/Login";
 
 export const theme = createMuiTheme({
     palette: {
@@ -41,7 +41,7 @@ class App extends Component {
                 label: "Profile Editor",
                 async tab() {
                     if (!this.component) {
-                        this.component = (await import(/* webpackChunkName: "profile" */"./Profile")).default
+                        this.component = (await import(/* webpackChunkName: "profile" */"./views/Profile")).default
                     }
                     return <this.component/>
                 }
