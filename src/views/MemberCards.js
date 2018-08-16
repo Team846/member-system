@@ -5,6 +5,8 @@ import firebase from 'firebase/app'
 import {Home, Mail, Phone, Wc} from '@material-ui/icons';
 import {levels} from "../settings";
 import MemberCard from '../components/MemberCard';
+import InputField from "../components/InputField";
+import Profile from "./Profile";
 
 class MemberCards extends Component {
     componentDidMount() {
@@ -19,6 +21,7 @@ class MemberCards extends Component {
         super(props);
         this.state = {
             allowEdits: false,
+            editMode: false,
             modal: {
                 open: false,
                 uid: null
@@ -30,9 +33,13 @@ class MemberCards extends Component {
 
     onEdit = uid => () => {
         this.setState({
-            allowEdits: true
+            allowEdits: true,
+            editMode: true,
+            modal: {
+                open: false,
+                uid
+            }
         });
-        this.openModal(uid)()   ;
     };
 
     openModal = uid => () => {
@@ -60,11 +67,34 @@ class MemberCards extends Component {
     };
 
     render() {
+        let fields = [{
+            left: <Mail/>,
+            model: "email"
+        }, {
+            left: <Phone/>,
+            model: "cell"
+        }, {
+            left: <Phone/>,
+            model: "home"
+        }, {
+            left: <Home/>,
+            model: "address",
+        }, {
+            left: <Wc/>,
+            model: "gender"
+        }, {
+            left: "Division",
+            model: "division"
+        }, {
+            left: "Role",
+            model: "role"
+        }];
         let user = this.state.users.find(user => user.uid === this.state.modal.uid);
         let currentUser = this.state.users.find(user => user.uid === firebase.auth().currentUser.uid) || {};
 
         return (
             <div className={"MemberCards"}>
+                {!this.state.allowEdits &&
                 <Grid container spacing={16}>
                     {this.state.users.map(user => <MemberCard
                         allowEdit={currentUser.level === levels.indexOf('Administrator')}
@@ -74,7 +104,8 @@ class MemberCards extends Component {
                         onChange={this.onSelectClicked(user.uid)}
                         selected={this.state.selectedUsers.indexOf(user.uid) !== -1}
                         user={user}/>)}
-                </Grid>
+                </Grid>}
+                {this.state.editMode && <Profile asAdmin={true} uid={this.state.modal.uid}/>}
                 {this.state.modal.open === true && <Modal
                     onClose={() => this.setState({
                         modal: {
@@ -93,37 +124,29 @@ class MemberCards extends Component {
                                             <TableCell><Mail/></TableCell>
                                             <TableCell><Typography>{user.email}</Typography></TableCell>
                                         </TableRow>
-                                        <TableRow>
-                                            <TableCell><Phone/></TableCell>
-                                            <TableCell><Typography>{user.cell}</Typography></TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell><Phone/></TableCell>
-                                            <TableCell><Typography>{user.home}</Typography></TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell><Home/></TableCell>
-                                            <TableCell><Typography>{user.address}</Typography></TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell><Wc/></TableCell>
-                                            <TableCell><Typography>{user.gender}</Typography></TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell>Division</TableCell>
-                                            <TableCell><Typography>{user.division}</Typography></TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell>Role</TableCell>
-                                            <TableCell><Typography>{user.role}</Typography></TableCell>
-                                        </TableRow>
+                                        {fields.map(value => {
+                                            if (this.state.allowEdits) {
+                                                return <TableRow>
+                                                    <TableCell>{value.left}</TableCell>
+                                                    <TableCell><InputField
+                                                        label={value.model}
+                                                        onChange={e => user[value.model] = e.target.value}
+                                                        value={user[value.model]}/></TableCell>
+                                                </TableRow>
+                                            } else {
+                                                return <TableRow>
+                                                    <TableCell>{value.left}</TableCell>
+                                                    <TableCell><Typography>{user[value.model]}</Typography></TableCell>
+                                                </TableRow>
+                                            }
+                                        })}
                                     </TableBody>
                                 </Table>
                             </Paper>
                         </Grid>
                     </Grid>
                 </Modal>}
-            </div>
+                </div>
         );
     }
 }
