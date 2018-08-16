@@ -26,8 +26,9 @@ export default [{
     options: ["Male", "Female", "Other"],
     type: "select"
 }, {
-    label: "Division",
+    label: "Division(s)",
     model: "division",
+    multiple: true,
     options: ["Animation", "Design", "Electrical", "Hardware", "Software"],
     type: 'select'
 }, {

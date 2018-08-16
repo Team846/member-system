@@ -12,5 +12,7 @@
 }
 
 .modal-paper {
+    max-height: 100vh;
+    overflow-y: auto;
     padding: 32px;
 }

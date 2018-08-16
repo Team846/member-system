@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import {Grid, Modal, Paper, Table, TableBody, TableCell, TableRow, Typography} from '@material-ui/core';
+import {Grid, IconButton, Modal, Paper, Table, TableBody, TableCell, TableRow, Typography} from '@material-ui/core';
 import './MemberCards.css';
 import firebase from 'firebase/app'
-import {Home, Mail, Phone, Wc} from '@material-ui/icons';
+import {ArrowBack, Home, Mail, Phone, Wc} from '@material-ui/icons';
 import {levels} from "../settings";
 import MemberCard from '../components/MemberCard';
 import InputField from "../components/InputField";
@@ -94,7 +94,7 @@ class MemberCards extends Component {
 
         return (
             <div className={"MemberCards"}>
-                {!this.state.allowEdits &&
+                {!this.state.editMode &&
                 <Grid container spacing={16}>
                     {this.state.users.map(user => <MemberCard
                         allowEdit={currentUser.level === levels.indexOf('Administrator')}
@@ -105,6 +105,8 @@ class MemberCards extends Component {
                         selected={this.state.selectedUsers.indexOf(user.uid) !== -1}
                         user={user}/>)}
                 </Grid>}
+                {this.state.editMode &&
+                <IconButton onClick={() => this.setState({editMode: false})}><ArrowBack/></IconButton>}
                 {this.state.editMode && <Profile asAdmin={true} uid={this.state.modal.uid}/>}
                 {this.state.modal.open === true && <Modal
                     onClose={() => this.setState({
@@ -131,8 +133,12 @@ class MemberCards extends Component {
                                                 </TableRow>
                                             } else {
                                                 return <TableRow>
-                                                    <TableCell>{value.left}</TableCell>
-                                                    <TableCell><Typography>{user[value.model]}</Typography></TableCell>
+                                                    <TableCell style={{
+                                                        padding: "4px 2px 4px 24px"
+                                                    }}>{value.left}</TableCell>
+                                                    <TableCell style={{
+                                                        paddingRight: "0"
+                                                    }}><Typography>{user[value.model]}</Typography></TableCell>
                                                 </TableRow>
                                             }
                                         })}
@@ -142,7 +148,7 @@ class MemberCards extends Component {
                         </Grid>
                     </Grid>
                 </Modal>}
-                </div>
+            </div>
         );
     }
 }

@@ -23,7 +23,9 @@ class Profile extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: {},
+            data: {
+                division: []
+            },
             fields: fields,
             updateButton: {
                 disabled: false,
@@ -65,6 +67,7 @@ class Profile extends Component {
                                         onChange={e => this.setState({
                                             data: {...this.state.data, [field.model]: e.target.value}
                                         })}
+                                        multiple={field.multiple}
                                         options={field.options}
                                         value={this.state.data[field.model] || field.options[0]}/>;
                                 break;
@@ -78,6 +81,17 @@ class Profile extends Component {
                             </InputGrid>
                         );
                     })}
+                    {this.props.asAdmin && <InputGrid>
+                        <SelectField
+                            label={"Level"}
+                            model={"level"}
+                            onChange={e => this.setState({
+                                data: {...this.state.data, level: levels.indexOf(e.target.value)}
+                            })}
+                            options={levels}
+                            value={levels[this.state.data.level] || levels[levels.length - 1]}
+                        />
+                    </InputGrid>}
                     <InputGrid>
                         <Button
                             disabled={this.state.updateButton.disabled}
