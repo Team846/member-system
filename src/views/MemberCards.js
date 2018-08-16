@@ -120,10 +120,6 @@ class MemberCards extends Component {
                                 <Typography variant={"headline"}>{user.name}</Typography>
                                 <Table>
                                     <TableBody>
-                                        <TableRow>
-                                            <TableCell><Mail/></TableCell>
-                                            <TableCell><Typography>{user.email}</Typography></TableCell>
-                                        </TableRow>
                                         {fields.map(value => {
                                             if (this.state.allowEdits) {
                                                 return <TableRow>
