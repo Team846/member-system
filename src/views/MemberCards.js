@@ -7,6 +7,7 @@ import {levels} from "../settings";
 import MemberCard from '../components/MemberCard';
 import InputField from "../components/InputField";
 import Profile from "./Profile";
+import SelectField from "../components/SelectField";
 
 class MemberCards extends Component {
     componentDidMount() {
@@ -22,6 +23,8 @@ class MemberCards extends Component {
         this.state = {
             allowEdits: false,
             editMode: false,
+            filterBy: this.filters[0],
+            filterText: "",
             modal: {
                 open: false,
                 uid: null
@@ -31,9 +34,41 @@ class MemberCards extends Component {
         }
     }
 
+    filters = [{
+        filter: user => {
+            return Object.values(user).some(it => String(it).includes(this.state.filterText));
+        },
+        name: "All",
+        type: "function"
+    }, {
+        map: "name",
+        name: "Name",
+    }, {
+        map: "email",
+        name: "Email"
+    }, {
+        filter: user => {
+            return user.division.join(', ').includes(this.state.filterText);
+        },
+        name: "Division",
+        type: "function"
+    }, {
+        map: "gender",
+        name: "Gender"
+    }, {
+        map: "role",
+        name: "Role"
+    }, {
+        filter: user => {
+            return levels[user.level].includes(this.state.filterText);
+        },
+        name: "Level",
+        type: "function"
+    }];
+
     onEdit = uid => () => {
         this.setState({
-            allowEdits: true,
+            // allowEdits: true,
             editMode: true,
             modal: {
                 open: false,
@@ -84,7 +119,8 @@ class MemberCards extends Component {
             model: "gender"
         }, {
             left: "Division",
-            model: "division"
+            model: "division",
+            transform: value => value.join(', ')
         }, {
             left: "Role",
             model: "role"
@@ -96,14 +132,38 @@ class MemberCards extends Component {
             <div className={"MemberCards"}>
                 {!this.state.editMode &&
                 <Grid container spacing={16}>
-                    {this.state.users.map(user => <MemberCard
-                        allowEdit={currentUser.level === levels.indexOf('Administrator')}
-                        key={user.uid}
-                        onEditClicked={this.onEdit(user.uid)}
-                        onInfoClicked={this.openModal(user.uid)}
-                        onChange={this.onSelectClicked(user.uid)}
-                        selected={this.state.selectedUsers.indexOf(user.uid) !== -1}
-                        user={user}/>)}
+                    <Grid item xs={12} md={6}>
+                        <SelectField
+                            label={"Filter By"}
+                            model={"filter-by"}
+                            onChange={e => this.setState({
+                                filterBy: this.filters.find(value => value.name === e.target.value)
+                            })}
+                            options={this.filters.map(it => it.name)}
+                            value={this.state.filterBy.name}/>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <InputField
+                            label={"Filter Text"}
+                            onChange={e => this.setState({filterText: e.target.value})}
+                            value={this.state.filterText}/>
+                    </Grid>
+                    {this.state.users
+                        .filter(user => {
+                            if (this.state.filterBy.type === 'function') {
+                                return this.state.filterBy.filter(user);
+                            } else {
+                                return String(user[this.state.filterBy.map]).includes(this.state.filterText);
+                            }
+                        })
+                        .map(user => <MemberCard
+                            allowEdit={currentUser.level === levels.indexOf('Administrator')}
+                            key={user.uid}
+                            onEditClicked={this.onEdit(user.uid)}
+                            onInfoClicked={this.openModal(user.uid)}
+                            onChange={this.onSelectClicked(user.uid)}
+                            selected={this.state.selectedUsers.indexOf(user.uid) !== -1}
+                            user={user}/>)}
                 </Grid>}
                 {this.state.editMode &&
                 <IconButton onClick={() => this.setState({editMode: false})}><ArrowBack/></IconButton>}
@@ -138,7 +198,7 @@ class MemberCards extends Component {
                                                     }}>{value.left}</TableCell>
                                                     <TableCell style={{
                                                         paddingRight: "0"
-                                                    }}><Typography>{user[value.model]}</Typography></TableCell>
+                                                    }}><Typography>{(value.transform || (value => value))(user[value.model])}</Typography></TableCell>
                                                 </TableRow>
                                             }
                                         })}
