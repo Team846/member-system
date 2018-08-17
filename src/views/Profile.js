@@ -9,7 +9,7 @@ import fields from '../fields';
 
 class Profile extends Component {
     componentDidMount() {
-        firebase.firestore().doc(`users/${this.props.uid || firebase.auth().currentUser.uid}`).onSnapshot(snapshot => {
+        this.unsubscriber = firebase.firestore().doc(`users/${this.props.uid || firebase.auth().currentUser.uid}`).onSnapshot(snapshot => {
             this.setState({
                 data: Object.assign({
                     email: firebase.auth().currentUser.email,
@@ -18,6 +18,10 @@ class Profile extends Component {
                 }, snapshot.data())
             });
         });
+    }
+
+    componentWillUnmount() {
+        this.unsubscriber();
     }
 
     constructor(props) {

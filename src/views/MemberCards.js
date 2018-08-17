@@ -11,11 +11,15 @@ import SelectField from "../components/SelectField";
 
 class MemberCards extends Component {
     componentDidMount() {
-        firebase.firestore().collection('users').onSnapshot(snapshot => {
+        this.subscriber = firebase.firestore().collection('users').onSnapshot(snapshot => {
             this.setState({
                 users: snapshot.docs.map(doc => doc.data())
             });
         });
+    }
+
+    componentWillUnmount() {
+        this.subscriber();
     }
 
     constructor(props) {
