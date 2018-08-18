@@ -5,10 +5,11 @@ import InputGrid from "../components/InputGrid";
 import InputField from "../components/InputField";
 import SelectField from "../components/SelectField";
 import {levels} from "../settings";
+import fields from '../fields';
 
 class Profile extends Component {
     componentDidMount() {
-        firebase.firestore().doc(`users/${firebase.auth().currentUser.uid}`).onSnapshot(snapshot => {
+        this.unsubscriber = firebase.firestore().doc(`users/${this.props.uid || firebase.auth().currentUser.uid}`).onSnapshot(snapshot => {
             this.setState({
                 data: Object.assign({
                     email: firebase.auth().currentUser.email,
@@ -19,48 +20,17 @@ class Profile extends Component {
         });
     }
 
+    componentWillUnmount() {
+        this.unsubscriber();
+    }
+
     constructor(props) {
         super(props);
         this.state = {
-            data: {},
-            fields: [{
-                label: "Name",
-                model: "name"
-            }, {
-                label: "Email",
-                model: "email"
-            }, {
-                label: "Cell Phone Number",
-                model: "cell",
-                type: "phone"
-            }, {
-                label: "Home Phone Number",
-                model: "home",
-                type: "phone"
-            }, {
-                label: "Preferred Phone Number",
-                model: "phone",
-                options: ["Home Phone", "Cell Phone"],
-                type: "select"
-            }, {
-                label: "Address",
-                model: "address"
-            }, {
-                label: "Gender",
-                model: "gender",
-                options: ["Male", "Female", "Other"],
-                type: "select"
-            }, {
-                label: "Division",
-                model: "division",
-                options: ["Animation", "Design", "Electrical", "Hardware", "Software"],
-                type: 'select'
-            }, {
-                label: "Role",
-                model: "role",
-                options: ["Adult", "Mentor", "Other", "Student"],
-                type: 'select'
-            }],
+            data: {
+                division: []
+            },
+            fields: fields,
             updateButton: {
                 disabled: false,
                 text: "Update"
@@ -101,6 +71,7 @@ class Profile extends Component {
                                         onChange={e => this.setState({
                                             data: {...this.state.data, [field.model]: e.target.value}
                                         })}
+                                        multiple={field.multiple}
                                         options={field.options}
                                         value={this.state.data[field.model] || field.options[0]}/>;
                                 break;
@@ -114,6 +85,17 @@ class Profile extends Component {
                             </InputGrid>
                         );
                     })}
+                    {this.props.asAdmin && <InputGrid>
+                        <SelectField
+                            label={"Level"}
+                            model={"level"}
+                            onChange={e => this.setState({
+                                data: {...this.state.data, level: levels.indexOf(e.target.value)}
+                            })}
+                            options={levels}
+                            value={levels[this.state.data.level] || levels[levels.length - 1]}
+                        />
+                    </InputGrid>}
                     <InputGrid>
                         <Button
                             disabled={this.state.updateButton.disabled}
@@ -146,7 +128,7 @@ class Profile extends Component {
                 text: "Updating..."
             }
         });
-        firebase.firestore().doc(`users/${firebase.auth().currentUser.uid}`).set(this.state.data)
+        firebase.firestore().doc(`users/${this.props.uid || firebase.auth().currentUser.uid}`).set(this.state.data)
             .then(() => {
                 this.setState({
                     updateButton: {

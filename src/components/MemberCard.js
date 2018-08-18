@@ -8,7 +8,7 @@ class MemberCard extends Component {
             <Grid item xs={12} sm={6} md={4} lg={3}>
                 <Card>
                     <CardContent>
-                        <Typography variant={"headline"}>{this.props.user.name} ({this.props.user.role})</Typography>
+                        <Typography>{this.props.user.name} ({this.props.user.role})</Typography>
                         <Checkbox
                             checked={this.props.selected}
                             onChange={this.props.onChange}/>

@@ -63,7 +63,8 @@ class Login extends Component {
                             disabled: true,
                             text: "Sent"
                         }
-                    })
+                    });
+                    this.scheduleButtonReset();
                 })
                 .catch(reason => {
                     this.setState({
@@ -73,9 +74,9 @@ class Login extends Component {
                         }
                     });
                     console.error(reason);
+                    this.scheduleButtonReset();
                 });
         }
-        this.scheduleButtonReset();
     };
 
     render() {
