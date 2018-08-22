@@ -73,7 +73,7 @@ class Profile extends Component {
                                         })}
                                         multiple={field.multiple}
                                         options={field.options}
-                                        value={this.state.data[field.model] || field.multiple ? [] : field.options[0]}/>;
+                                        value={this.state.data[field.model] || (field.multiple ? [] : field.options[0])}/>;
                                 break;
                             default:
                                 component = null;
