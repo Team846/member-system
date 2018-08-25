@@ -152,6 +152,7 @@ class MemberCards extends Component {
                             onChange={e => this.setState({filterText: e.target.value})}
                             value={this.state.filterText}/>
                     </Grid>
+                    {this.state.users.length === 0 && <Typography variant={"display1"}>No members   </Typography>}
                     {this.state.users
                         .filter(user => {
                             if (this.state.filterBy.type === 'function') {
