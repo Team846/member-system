@@ -16,7 +16,7 @@ class Login extends Component {
                 this.setState({
                     submitButton: {
                         disabled: false,
-                        text: "Sign In"
+                        text: "Finish Sign In"
                     }
                 });
             }
@@ -90,7 +90,7 @@ class Login extends Component {
                             margin={"dense"}
                             onChange={this.onEmailChanged}
                             value={this.state.email}/>
-                        <Typography variant={"caption"}>You'll receive a sign-in email</Typography>
+                        {this.state.isSignInLink && <Typography variant={"caption"}>You'll receive a sign-in email</Typography>}
                         <Button
                             className={"moderately-wide"}
                             disabled={this.state.submitButton.disabled}
