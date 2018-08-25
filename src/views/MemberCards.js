@@ -162,7 +162,7 @@ class MemberCards extends Component {
                             }
                         })
                         .map(user => <MemberCard
-                            allowEdit={currentUser.level === levels.indexOf('Administrator')}
+                            allowEdit={currentUser.level >= levels.indexOf('Officer')}
                             key={user.uid}
                             onEditClicked={this.onEdit(user.uid)}
                             onInfoClicked={this.openModal(user.uid)}

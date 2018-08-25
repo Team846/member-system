@@ -13,8 +13,8 @@ class Profile extends Component {
             this.setState({
                 data: Object.assign({
                     email: firebase.auth().currentUser.email,
-                    level: levels.length - 1,
-                    uid: firebase.auth().currentUser.uid,
+                    level: 0,
+                    uid: firebase.auth().currentUser.uid
                 }, snapshot.data())
             });
         });
