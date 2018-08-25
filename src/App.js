@@ -45,6 +45,11 @@ class App extends Component {
                     }
                     return <this.component/>
                 }
+            }, {
+                label: "Sign Out",
+                async tab() {
+                    firebase.auth().signOut();
+                }
             }]
         };
     }
