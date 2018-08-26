@@ -132,6 +132,17 @@ class MemberCards extends Component {
         let user = this.state.users.find(user => user.uid === this.state.modal.uid);
         let currentUser = this.state.users.find(user => user.uid === firebase.auth().currentUser.uid) || {};
 
+        function createTableRow(i, value) {
+            return <TableRow key={i}>
+                <TableCell className={"left-cell"}>{value.left}</TableCell>
+                <TableCell className={"right-cell"}>
+                    <Typography>
+                        {(value.transform || (value => value))(user[value.model])}
+                    </Typography>
+                </TableCell>
+            </TableRow>;
+        }
+
         return (
             <div className={"MemberCards"}>
                 {!this.state.editMode &&
@@ -188,14 +199,15 @@ class MemberCards extends Component {
                                 <Table>
                                     <TableBody>
                                         {fields.map((value, i) => {
-                                            return <TableRow key={i}>
-                                                <TableCell style={{
-                                                    padding: "4px 2px 4px 24px"
-                                                }}>{value.left}</TableCell>
-                                                <TableCell style={{
-                                                    paddingRight: "0"
-                                                }}><Typography>{(value.transform || (value => value))(user[value.model])}</Typography></TableCell>
-                                            </TableRow>
+                                            return createTableRow(i, value)
+                                        })}
+                                        {user.role === 'Student' && createTableRow(fields.length, {
+                                            left: "Graduation Year",
+                                            model: "graduation"
+                                        })}
+                                        {['Adult', 'Mentor'].indexOf(user.role) !== -1 && createTableRow(fields.length, {
+                                            left: "Employer",
+                                            model: "employer"
                                         })}
                                     </TableBody>
                                 </Table>

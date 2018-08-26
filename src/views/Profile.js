@@ -42,52 +42,30 @@ class Profile extends Component {
     }
 
     render() {
+        let studentFields = [{
+            label: "Graduation Year",
+            model: "graduation",
+            options: [...Array(5)].map((_, i) => String(new Date().getFullYear() + i)),
+            type: "select"
+        }];
+        let adultFields = [{
+            label: "Employer",
+            model: "employer"
+        }];
+        let inputBuilder = field => {
+            let component = this.createComponentFrom(field);
+            return (
+                <InputGrid key={field.model}>
+                    {component}
+                </InputGrid>
+            );
+        };
         return (
             <form onSubmit={this.updateProfile}>
                 <Grid container justify={"center"}>
-                    {this.state.fields.map(field => {
-                        field = Object.assign({
-                            label: "",
-                            model: "",
-                            options: [],
-                            type: "input"
-                        }, field);
-
-                        let component = null;
-                        switch (field.type) {
-                            case 'phone':
-                            case 'input':
-                                component =
-                                    <InputField
-                                        label={field.label}
-                                        onChange={e => this.setState({
-                                            data: {...this.state.data, [field.model]: e.target.value}
-                                        })}
-                                        type={field.type}
-                                        value={this.state.data[field.model] || ''}/>;
-                                break;
-                            case 'select':
-                                component =
-                                    <SelectField
-                                        label={field.label}
-                                        model={field.model}
-                                        onChange={e => this.setState({
-                                            data: {...this.state.data, [field.model]: e.target.value}
-                                        })}
-                                        multiple={field.multiple}
-                                        options={field.options}
-                                        value={this.state.data[field.model] || (field.multiple ? [] : field.options[0])}/>;
-                                break;
-                            default:
-                                component = null;
-                                break;
-                        } // Generate the component variable
-                        return (
-                            <InputGrid key={field.model}>
-                                {component}
-                            </InputGrid>
-                        );
-                    })}
+                    {this.state.fields.map(inputBuilder)}
+                    {this.state.data.role === 'Student' && studentFields.map(inputBuilder)}
+                    {["Adult", "Mentor"].indexOf(this.state.data.role) !== -1 && adultFields.map(inputBuilder)}
                     {this.props.asAdmin && <InputGrid>
                         <SelectField
                             label={"Level"}
@@ -110,6 +88,45 @@ class Profile extends Component {
                 </Grid>
             </form>
         );
+    }
+
+    createComponentFrom(field) {
+        field = Object.assign({
+            label: "",
+            model: "",
+            options: [],
+            type: "input"
+        }, field);
+        let component = null;
+        switch (field.type) {
+            case 'phone':
+            case 'input':
+                component =
+                    <InputField
+                        label={field.label}
+                        onChange={e => this.setState({
+                            data: {...this.state.data, [field.model]: e.target.value}
+                        })}
+                        type={field.type}
+                        value={this.state.data[field.model] || ''}/>;
+                break;
+            case 'select':
+                component =
+                    <SelectField
+                        label={field.label}
+                        model={field.model}
+                        onChange={e => this.setState({
+                            data: {...this.state.data, [field.model]: e.target.value}
+                        })}
+                        multiple={field.multiple}
+                        options={field.options}
+                        value={this.state.data[field.model] || (field.multiple ? [] : field.options[0])}/>;
+                break;
+            default:
+                component = null;
+                break;
+        } // Generate the component variable
+        return component;
     }
 
     scheduleUpdateButtonReset = () => {
