@@ -15,6 +15,7 @@ class Profile extends Component {
                     email: firebase.auth().currentUser.email,
                     division: [],
                     gender: "Male",
+                    graduation: String(new Date().getFullYear()),
                     level: 0,
                     role: "Other",
                     uid: firebase.auth().currentUser.uid
@@ -48,6 +49,13 @@ class Profile extends Component {
             options: [...Array(5)].map((_, i) => String(new Date().getFullYear() + i)),
             type: "select"
         }];
+        let studentAndMentorFields = [{
+            label: "Division(s)",
+            model: "division",
+            multiple: true,
+            options: ["Animation", "Design", "Electrical", "Hardware", "Software"],
+            type: 'select'
+        }];
         let adultFields = [{
             label: "Employer",
             model: "employer"
@@ -66,6 +74,7 @@ class Profile extends Component {
                     {this.state.fields.map(inputBuilder)}
                     {this.state.data.role === 'Student' && studentFields.map(inputBuilder)}
                     {["Adult", "Mentor"].indexOf(this.state.data.role) !== -1 && adultFields.map(inputBuilder)}
+                    {["Student", "Mentor"].indexOf(this.state.data.role) !== -1 && studentAndMentorFields.map(inputBuilder)}
                     {this.props.asAdmin && <InputGrid>
                         <SelectField
                             label={"Level"}
