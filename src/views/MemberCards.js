@@ -152,7 +152,7 @@ class MemberCards extends Component {
                             onChange={e => this.setState({filterText: e.target.value})}
                             value={this.state.filterText}/>
                     </Grid>
-                    {this.state.users.length === 0 && <Typography variant={"display1"}>No members   </Typography>}
+                    {this.state.users.length === 0 && <Typography variant={"display1"}>No members </Typography>}
                     {this.state.users
                         .filter(user => {
                             if (this.state.filterBy.type === 'function') {
@@ -187,25 +187,15 @@ class MemberCards extends Component {
                                 <Typography variant={"headline"}>{user.name}</Typography>
                                 <Table>
                                     <TableBody>
-                                        {fields.map(value => {
-                                            if (this.state.allowEdits) {
-                                                return <TableRow>
-                                                    <TableCell>{value.left}</TableCell>
-                                                    <TableCell><InputField
-                                                        label={value.model}
-                                                        onChange={e => user[value.model] = e.target.value}
-                                                        value={user[value.model]}/></TableCell>
-                                                </TableRow>
-                                            } else {
-                                                return <TableRow>
-                                                    <TableCell style={{
-                                                        padding: "4px 2px 4px 24px"
-                                                    }}>{value.left}</TableCell>
-                                                    <TableCell style={{
-                                                        paddingRight: "0"
-                                                    }}><Typography>{(value.transform || (value => value))(user[value.model])}</Typography></TableCell>
-                                                </TableRow>
-                                            }
+                                        {fields.map((value, i) => {
+                                            return <TableRow key={i}>
+                                                <TableCell style={{
+                                                    padding: "4px 2px 4px 24px"
+                                                }}>{value.left}</TableCell>
+                                                <TableCell style={{
+                                                    paddingRight: "0"
+                                                }}><Typography>{(value.transform || (value => value))(user[value.model])}</Typography></TableCell>
+                                            </TableRow>
                                         })}
                                     </TableBody>
                                 </Table>
