@@ -1,1 +1,1 @@
-export const levels = ["Standard", "Tentative", "Member", "Officer", "Administrator"];
+export const levels = ["Standard", "Tentative", "Adult", "Member", "Officer", "Administrator"];
