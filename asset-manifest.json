@@ -1,6 +1,8 @@
 {
   "main.css": "static/css/main.c4c12e84.css",
   "main.css.map": "static/css/main.c4c12e84.css.map",
-  "main.js": "static/js/main.55fd7fe7.js",
-  "main.js.map": "static/js/main.55fd7fe7.js.map"
+  "main.js": "static/js/main.4d1fe057.js",
+  "main.js.map": "static/js/main.4d1fe057.js.map",
+  "member-table.js": "static/js/member-table.cd64b7f5.chunk.js",
+  "member-table.js.map": "static/js/member-table.cd64b7f5.chunk.js.map"
 }
