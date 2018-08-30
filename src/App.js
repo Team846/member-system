@@ -46,9 +46,18 @@ class App extends Component {
                     return <this.component/>
                 }
             }, {
+                component: null,
+                label: "Member Table",
+                async tab() {
+                    if (!this.component) {
+                        this.component = (await import(/* webpackChunkName: "member-table" */"./views/MemberTable")).default
+                    }
+                    return <this.component/>
+                }
+            }, {
                 label: "Sign Out",
                 async tab() {
-                    firebase.auth().signOut();
+                    await firebase.auth().signOut();
                 }
             }]
         };
