@@ -1,5 +1,5 @@
 import React, {Component} from "react"
-import {Table, TableBody, TableRow, TableCell, TableHead, TableSortLabel} from "@material-ui/core"
+import {Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel} from "@material-ui/core"
 import firebase from "firebase";
 import fields from "../fields"
 
@@ -55,14 +55,12 @@ class MemberTable extends Component {
     render() {
         if (!this.state.users) return null;
 
-        let columns = fields
-
         return (
             <Table>
                 <TableHead>
                     <TableRow>
                         {
-                            columns.map(column => {
+                            fields.map(column => {
                                     return <TableCell key={column.label}>
                                         <TableSortLabel
                                             active={this.state.orderedBy === column.label}
@@ -72,19 +70,25 @@ class MemberTable extends Component {
                                         {column.label}
                                     </TableCell>
                                 }
-                            )}
+                            )
+                        }
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {this.state.users.sort(getSorting(this.state.orderDir, columns.find(col => col.label === this.state.orderedBy).model)).map(user => {
-                        return <TableRow key={user.uid}>
-                            {columns.map(column => {
-                                return <TableCell key={column.model}>
-                                    {user[column.model]}
-                                </TableCell>
-                            })}
-                        </TableRow>
-                    })}
+                    {
+                        this.state.users
+                            .sort(getSorting(this.state.orderDir, fields.find(col => col.label === this.state.orderedBy).model))
+                            .map(user =>
+                                <TableRow key={user.uid}>
+                                    {fields
+                                        .map(column => {
+                                            return <TableCell key={column.model}>
+                                                {user[column.model]}
+                                            </TableCell>
+                                        })}
+                                </TableRow>
+                            )
+                    }
                 </TableBody>
             </Table>
         )

@@ -10,7 +10,7 @@ class MemberCard extends Component {
                 <Card>
                     <CardContent>
                         <Typography variant={"headline"}>
-                            {this.props.user.name} {this.props.user.role ? `(${this.props.user.role} ${levels[this.props.user.level]})` : ''}
+                            {this.props.user.name} {this.props.user.level ? `(${levels[this.props.user.level]})` : ''}
                         </Typography>
                         <Checkbox
                             checked={this.props.selected}

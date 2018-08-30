@@ -40,7 +40,7 @@ class MemberCards extends Component {
 
     filters = [{
         filter: user => {
-            return Object.values(user).some(it => String(it).includes(this.state.filterText));
+            return Object.values(user).some(it => String(it).includes(this.state.filterText.toLowerCase()));
         },
         name: "All",
         type: "function"
