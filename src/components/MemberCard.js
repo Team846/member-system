@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {Card, CardContent, Checkbox, Grid, IconButton, Typography} from "@material-ui/core";
 import {Edit, Info, Mail, Phone} from "@material-ui/icons";
+import {levels} from "../settings";
 
 class MemberCard extends Component {
     render() {
@@ -9,7 +10,7 @@ class MemberCard extends Component {
                 <Card>
                     <CardContent>
                         <Typography variant={"headline"}>
-                            {this.props.user.name} {this.props.user.role ? `(${this.props.user.role})` : ''}
+                            {this.props.user.name} {this.props.user.role ? `(${this.props.user.role} ${levels[this.props.user.level]})` : ''}
                         </Typography>
                         <Checkbox
                             checked={this.props.selected}

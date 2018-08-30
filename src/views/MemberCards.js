@@ -169,7 +169,7 @@ class MemberCards extends Component {
                             if (this.state.filterBy.type === 'function') {
                                 return this.state.filterBy.filter(user);
                             } else {
-                                return String(user[this.state.filterBy.map]).includes(this.state.filterText);
+                                return String(user[this.state.filterBy.map]).includes(this.state.filterText.toLowerCase());
                             }
                         })
                         .map(user => <MemberCard

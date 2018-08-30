@@ -17,6 +17,7 @@ import './App.css';
 import firebase from 'firebase/app';
 import MemberCards from "./views/MemberCards";
 import Login from "./views/Login";
+import MemberTable from "./views/MemberTable"
 
 export const theme = createMuiTheme({
     palette: {
@@ -28,7 +29,7 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            content: <MemberCards/>,
+            content: <MemberTable/>,
             loggedIn: false,
             menuOpen: false,
             tabs: [{
@@ -44,6 +45,11 @@ class App extends Component {
                         this.component = (await import(/* webpackChunkName: "profile" */"./views/Profile")).default
                     }
                     return <this.component/>
+                }
+            }, {
+                label: "Member Table",
+                async tab() {
+                    return <MemberTable/>
                 }
             }, {
                 label: "Sign Out",
