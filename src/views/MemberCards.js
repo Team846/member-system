@@ -40,7 +40,7 @@ class MemberCards extends Component {
 
     filters = [{
         filter: user => {
-            return Object.values(user).some(it => String(it).includes(this.state.filterText.toLowerCase()));
+            return Object.values(user).some(it => String(it).toLowerCase().includes(this.state.filterText.toLowerCase()));
         },
         name: "All",
         type: "function"
@@ -52,7 +52,7 @@ class MemberCards extends Component {
         name: "Email"
     }, {
         filter: user => {
-            return user.division.join(', ').includes(this.state.filterText);
+            return user.division.join(', ').toLowerCase().includes(this.state.filterText.toLowerCase());
         },
         name: "Division",
         type: "function"
@@ -64,7 +64,7 @@ class MemberCards extends Component {
         name: "Role"
     }, {
         filter: user => {
-            return levels[user.level].includes(this.state.filterText);
+            return levels[user.level].toLowerCase().includes(this.state.filterText.toLowerCase());
         },
         name: "Level",
         type: "function"
@@ -169,7 +169,7 @@ class MemberCards extends Component {
                             if (this.state.filterBy.type === 'function') {
                                 return this.state.filterBy.filter(user);
                             } else {
-                                return String(user[this.state.filterBy.map]).includes(this.state.filterText.toLowerCase());
+                                return String(user[this.state.filterBy.map]).toLowerCase().includes(this.state.filterText.toLowerCase());
                             }
                         })
                         .map(user => <MemberCard
