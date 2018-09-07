@@ -16,7 +16,7 @@ class Profile extends Component {
                     division: [],
                     gender: "Male",
                     graduation: String(new Date().getFullYear()),
-                    level: 0,
+                    level: 1,
                     role: "Other",
                     uid: firebase.auth().currentUser.uid
                 }, snapshot.data())
