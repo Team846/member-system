@@ -1,6 +1,6 @@
 import React, {Component} from "react"
 import {Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel} from "@material-ui/core"
-import firebase from "firebase";
+import firebase from "firebase/app";
 import fields from "../fields"
 
 function getSorting(order, orderBy) {
