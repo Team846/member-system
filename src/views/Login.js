@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './Login.css';
 import {Button, Card, TextField, Typography} from '@material-ui/core';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 
 class Login extends Component {
     componentDidMount() {
