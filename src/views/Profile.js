@@ -48,6 +48,24 @@ class Profile extends Component {
             model: "graduation",
             options: [...Array(5)].map((_, i) => String(new Date().getFullYear() + i)),
             type: "select"
+        }, {
+            label: "Parent 1 Name",
+            model: "parent1name"
+        }, {
+            label: "Parent 1 Email",
+            model: "parent1email"
+        }, {
+            label: "Parent 1 Employer",
+            model: "parent1employer"
+        }, {
+            label: "Parent 2 Name",
+            model: "parent2name"
+        }, {
+            label: "Parent 2 Email",
+            model: "parent2email"
+        }, {
+            label: "Parent 2 Employer",
+            model: "parent2employer"
         }];
         let studentAndMentorFields = [{
             label: "Division(s)",
@@ -72,9 +90,9 @@ class Profile extends Component {
             <form onSubmit={this.updateProfile}>
                 <Grid container justify={"center"}>
                     {this.state.fields.map(inputBuilder)}
-                    {this.state.data.role === 'Student' && studentFields.map(inputBuilder)}
                     {["Adult", "Mentor"].indexOf(this.state.data.role) !== -1 && adultFields.map(inputBuilder)}
                     {["Student", "Mentor"].indexOf(this.state.data.role) !== -1 && studentAndMentorFields.map(inputBuilder)}
+                    {this.state.data.role === 'Student' && studentFields.map(inputBuilder)}
                     {this.props.asAdmin && <InputGrid>
                         <SelectField
                             label={"Level"}
