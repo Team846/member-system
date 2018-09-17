@@ -5,17 +5,22 @@ export default [{
     label: "Email",
     model: "email"
 }, {
-    label: "Cell Phone Number",
-    model: "cell",
+    label: "Primary Phone Number",
+    model: "phone1",
     type: "phone"
 }, {
-    label: "Home Phone Number",
+    label: "Primary Phone Number Type",
+    model: "phone1type",
+    options: ["Cell Phone", "Cell Phone (No SMS)", "Home Phone"],
+    type: "select"
+}, {
+    label: "Secondary Phone Number",
     model: "home",
     type: "phone"
 }, {
-    label: "Preferred Phone Number",
+    label: "Secondary Phone Number Type",
     model: "phone",
-    options: ["Home Phone", "Cell Phone"],
+    options: ["Cell Phone", "Cell Phone (No SMS)", "Home Phone"],
     type: "select"
 }, {
     label: "Address",

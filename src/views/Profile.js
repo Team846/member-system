@@ -44,13 +44,19 @@ class Profile extends Component {
 
     render() {
         let studentFields = [{
+            label: "Student ID",
+            model: "student-id"
+        }, {
             label: "Graduation Year",
             model: "graduation",
             options: [...Array(5)].map((_, i) => String(new Date().getFullYear() + i)),
             type: "select"
         }, {
-            label: "Parent 1 Name",
-            model: "parent1name"
+            label: "Parent 1 First Name",
+            model: "parent1fname"
+        }, {
+            label: "Parent 1 Last Name",
+            model: "parent1lname"
         }, {
             label: "Parent 1 Email",
             model: "parent1email"
@@ -58,8 +64,11 @@ class Profile extends Component {
             label: "Parent 1 Employer",
             model: "parent1employer"
         }, {
-            label: "Parent 2 Name",
-            model: "parent2name"
+            label: "Parent 2 First Name",
+            model: "parent2fname"
+        }, {
+            label: "Parent 2 Last Name",
+            model: "parent2lname"
         }, {
             label: "Parent 2 Email",
             model: "parent2email"

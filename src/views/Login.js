@@ -4,29 +4,11 @@ import {Button, Card, TextField, Typography} from '@material-ui/core';
 import firebase from 'firebase/app';
 
 class Login extends Component {
-    componentDidMount() {
-        if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
-            this.setState({
-                isSignInLink: true
-            });
-            const email = localStorage.getItem('email');
-            if (email) {
-                this.signIn(email);
-            } else {
-                this.setState({
-                    submitButton: {
-                        disabled: false,
-                        text: "Finish Sign In"
-                    }
-                });
-            }
-        }
-    }
-
     constructor(props) {
         super(props);
         this.state = {
             email: "",
+            password: "",
             isSignInLink: false,
             submitButton: {
                 disabled: false,
@@ -41,42 +23,27 @@ class Login extends Component {
         });
     };
 
+    onPasswordChanged = e => {
+        this.setState({
+            password: e.target.value
+        });
+    };
+
     onFormSubmit = e => {
         e.preventDefault();
-        if (this.state.isSignInLink) {
-            this.signIn(this.state.email);
-        } else {
-            localStorage.setItem('email', this.state.email);
-            this.setState({
-                submitButton: {
-                    disabled: true,
-                    text: "Sending..."
-                }
-            });
-            firebase.auth().sendSignInLinkToEmail(this.state.email, {
-                handleCodeInApp: true,
-                url: window.location.href
-            })
-                .then(() => {
-                    this.setState({
-                        submitButton: {
-                            disabled: true,
-                            text: "Sent"
-                        }
-                    });
-                    this.scheduleButtonReset();
-                })
-                .catch(reason => {
+        firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+            .catch(reason => {
+                if (reason.code === "auth/user-not-found") {
+                    firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password);
+                } else {
                     this.setState({
                         submitButton: {
                             disabled: true,
                             text: "Failed"
                         }
                     });
-                    console.error(reason);
-                    this.scheduleButtonReset();
-                });
-        }
+                }
+            });
     };
 
     render() {
@@ -90,9 +57,13 @@ class Login extends Component {
                             margin={"dense"}
                             onChange={this.onEmailChanged}
                             value={this.state.email}/>
-                        {!this.state.isSignInLink && <Typography variant={"caption"}>You'll receive a sign-in email</Typography>}
+                        <TextField
+                            label={"Password"}
+                            margin={"dense"}
+                            onChange={this.onPasswordChanged}
+                            type={"password"}
+                            value={this.state.password}/>
                         <Button
-                            // className={"moderately-wide"}
                             fullWidth
                             disabled={this.state.submitButton.disabled}
                             type={"submit"}>
@@ -102,35 +73,6 @@ class Login extends Component {
                 </Card>
             </div>
         );
-    }
-
-    scheduleButtonReset = () => {
-        setTimeout(() => {
-            this.setState({
-                submitButton: {
-                    disabled: false,
-                    text: "Next"
-                }
-            });
-        }, 1000);
-    };
-
-    signIn = email => {
-        this.setState({
-            submitButton: {
-                disabled: true,
-                text: "Signing In..."
-            }
-        });
-        firebase.auth().signInWithEmailLink(email, window.location.href)
-            .then(() => {
-                this.setState({
-                    submitButton: {
-                        disabled: true,
-                        text: "Signed In"
-                    }
-                })
-            });
     }
 }
 
