@@ -1,127 +1,50 @@
+import CssBaseline from "@material-ui/core/CssBaseline/CssBaseline";
+import Header, {drawerWidth} from './components/Header';
+import PropTypes from 'prop-types';
 import React, {Component} from 'react';
-import {
-    AppBar,
-    CssBaseline,
-    Drawer,
-    IconButton,
-    List,
-    ListItem,
-    ListItemText,
-    Toolbar,
-    Typography
-} from '@material-ui/core';
-import {createMuiTheme, MuiThemeProvider, withStyles} from '@material-ui/core/styles';
-import {red} from '@material-ui/core/colors';
-import {Menu} from '@material-ui/icons';
-import './App.css';
-import firebase from 'firebase/app';
-import MemberCards from "./views/MemberCards";
-import Login from "./views/Login";
-
-export const theme = createMuiTheme({
-    palette: {
-        primary: red
-    }
-});
+import withStyles from "@material-ui/core/styles/withStyles";
+import Typography from "@material-ui/core/Typography/Typography";
 
 class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            content: <MemberCards/>,
-            loggedIn: false,
-            menuOpen: false,
-            tabs: [{
-                label: "Members",
-                async tab() {
-                    return <MemberCards/>
-                }
-            }, {
-                component: null,
-                label: "Profile Editor",
-                async tab() {
-                    if (!this.component) {
-                        this.component = (await import(/* webpackChunkName: "profile" */"./views/Profile")).default
-                    }
-                    return <this.component/>
-                }
-            }, {
-                component: null,
-                label: "Member Table",
-                async tab() {
-                    if (!this.component) {
-                        this.component = (await import(/* webpackChunkName: "member-table" */"./views/MemberTable")).default
-                    }
-                    return <this.component/>
-                }
-            }, {
-                label: "Sign Out",
-                async tab() {
-                    await firebase.auth().signOut();
-                }
-            }]
+            authenticated: true,
+            content: <Typography>Loading your profile...</Typography>
         };
     }
 
-    componentDidMount() {
-        firebase.auth().onAuthStateChanged(user => {
-            this.setState({
-                loggedIn: user !== null
-            });
-        });
-    }
-
     render() {
-        const {classes} = this.props;
+        const
+            {authenticated} = this.state,
+            {classes} = this.props;
 
         return (
-            <MuiThemeProvider
-                theme={theme}>
-                <CssBaseline>
-                    <AppBar>
-                        <Toolbar>
-                            <IconButton className={classes.menuIcon} color={"inherit"} onClick={() => this.setState({
-                                menuOpen: !this.state.menuOpen
-                            })}>
-                                <Menu/>
-                            </IconButton>
-                            <Typography color={"inherit"} variant={"title"}>Member System</Typography>
-                        </Toolbar>
-                    </AppBar>
-                    <Drawer
-                        open={this.state.menuOpen}
-                        onClose={() => this.setState({
-                            menuOpen: false
-                        })}>
-                        <List className={"list"} onClick={() => this.setState({
-                            menuOpen: false
-                        })}>
-                            {this.state.tabs.map(tab => {
-                                return <ListItem button key={tab.label} onClick={() => {
-                                    tab.tab().then(tab => {
-                                        this.setState({
-                                            content: tab
-                                        });
-                                    })
-                                }}>
-                                    <ListItemText primary={tab.label}/>
-                                </ListItem>
-                            })}
-                        </List>
-                    </Drawer>
-                    <div className={"content"}>
-                        {!this.state.loggedIn && <Login/>}
-                        {this.state.loggedIn && this.state.content}
-                    </div>
-                </CssBaseline>
-            </MuiThemeProvider>
+            <React.Fragment>
+                <CssBaseline/>
+                <Header authenticated={authenticated} onNewContent={this.updateContent}/>
+                {authenticated && <div className={classes.content}>{this.state.content}</div>}
+            </React.Fragment>
         );
+    }
+
+    updateContent = content => {
+        this.setState({content});
     }
 }
 
-export default withStyles({
-    menuIcon: {
-        marginLeft: -12,
-        marginRight: 20
+App.propTypes = {
+    classes: PropTypes.object.isRequired
+};
+
+App.styles = theme => ({
+    content: {
+        marginTop: 56,
+        [theme.breakpoints.up('md')]: {
+            marginLeft: drawerWidth,
+            marginTop: 64
+        }
     }
-})(App);
+});
+
+export default withStyles(App.styles)(App);
