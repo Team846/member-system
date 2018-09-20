@@ -76,7 +76,7 @@ export default {
         {
             condition: isStudent,
             label: "Graduation Year",
-            options: [...Array(5)].map((_, i) => new Date().getFullYear() + i),
+            options: [...Array(5)].map((_, i) => String(new Date().getFullYear() + i)),
             type: "select"
         },
         {
@@ -118,6 +118,7 @@ export default {
             label: "Employer"
         }
     ],
+    liteFields: ['firstName', 'lastName', 'emailAddress', 'primaryPhoneNumber', 'primaryPhoneType'],
     tabs: [
         {
             async get() {
@@ -126,6 +127,14 @@ export default {
             },
             label: "Profile Editor",
             minPermissionLevel: "Standard"
+        },
+        {
+            async get() {
+                const Members = (await import('./views/Members')).default;
+                return <Members variant={"cards"}/>
+            },
+            label: "Member Cards",
+            minPermissionLevel: "Member"
         }
     ]
 };

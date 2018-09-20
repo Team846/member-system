@@ -4,12 +4,20 @@ import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography/Typography";
+import firebase from "firebase/app";
+import Login from "./views/Login";
 
 class App extends Component {
+    componentDidMount() {
+        firebase.auth().onAuthStateChanged(user => {
+            this.setState({authenticated: user !== null});
+        });
+    }
+
     constructor(props) {
         super(props);
         this.state = {
-            authenticated: true,
+            authenticated: false,
             content: <Typography>Loading your profile...</Typography>
         };
     }
@@ -24,6 +32,7 @@ class App extends Component {
                 <CssBaseline/>
                 <Header authenticated={authenticated} onNewContent={this.updateContent}/>
                 {authenticated && <div className={classes.content}>{this.state.content}</div>}
+                {!authenticated && <Login/>}
             </React.Fragment>
         );
     }

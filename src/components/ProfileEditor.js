@@ -9,11 +9,15 @@ import FormControl from "@material-ui/core/FormControl/FormControl";
 import InputLabel from "@material-ui/core/InputLabel/InputLabel";
 import Select from "@material-ui/core/Select/Select";
 import MenuItem from "@material-ui/core/MenuItem/MenuItem";
+import firebase from "firebase/app";
+import Button from "@material-ui/core/Button/Button";
 
 class ProfileEditor extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            buttonDisabled: false,
+            buttonText: "Update",
             profile: {
                 firstName: "",
                 lastName: "",
@@ -26,7 +30,7 @@ class ProfileEditor extends Component {
                 gender: "Other",
                 role: "Student",
                 studentId: "",
-                graduationYear: "",
+                graduationYear: String(new Date().getFullYear() + 4),
                 parent1FirstName: "",
                 parent1LastName: "",
                 parent1EmailAddress: "",
@@ -37,6 +41,17 @@ class ProfileEditor extends Component {
                 parent2Employer: ""
             }
         };
+    }
+
+    componentDidMount() {
+        this.unsubscribe = firebase.firestore().doc(`users/${this.props.uid || firebase.auth().currentUser.uid}`)
+            .onSnapshot(snapshot => {
+                this.setState({profile: snapshot.data()});
+            });
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
     }
 
     render() {
@@ -61,7 +76,7 @@ class ProfileEditor extends Component {
                                             <InputLabel htmlFor={field.model}>{field.label}</InputLabel>
                                             <Select
                                                 inputProps={{id: field.model}}
-                                                onChange={this.updateProfile(model)}
+                                                onChange={this.updateLocalProfile(model)}
                                                 value={profile[model]}>
                                                 {field.options
                                                     .map(option => <MenuItem key={option} value={option}>
@@ -77,26 +92,60 @@ class ProfileEditor extends Component {
                                             {...filtered}
                                             fullWidth
                                             margin={"dense"}
-                                            onChange={this.updateProfile(model)}
+                                            onChange={this.updateLocalProfile(model)}
                                             value={profile[model]}/>)
                             }
                             return ProfileEditor.wrapWithGrid(component, field.label);
                         })
                 }
+                {ProfileEditor.wrapWithGrid(<Button disabled={this.state.buttonDisabled} fullWidth
+                                                    onClick={this.updateRemoteProfile}>{this.state.buttonText}</Button>)}
             </Grid>
         );
     }
 
-    updateProfile = model => e => {
+    updateRemoteProfile = () => {
+        const updateButton = (text, disabled) => {
+            this.setState({buttonDisabled: disabled !== undefined ? disabled : true, buttonText: text})
+        };
+
+        const scheduleButtonReset = () => {
+            setTimeout(updateButton, 1000, "Update", false);
+        };
+
+        updateButton("Updating...");
+        firebase.firestore().doc(`users/${this.props.uid || firebase.auth().currentUser.uid}`)
+            .set(this.state.profile)
+            .then(() => {
+                const {profile} = this.state;
+                const liteProfile = {};
+                for (let liteField in settings.liteFields) {
+                    liteProfile[liteField] = profile[liteField];
+                }
+                firebase.firestore().doc(`lite-users/${this.props.uid || firebase.auth().currentUser.uid}`)
+                    .set(liteProfile)
+                    .then(() => {
+                        updateButton("Updated");
+                        scheduleButtonReset();
+                    });
+            })
+            .catch(e => {
+                updateButton("Failed");
+                scheduleButtonReset();
+                console.error(e);
+            });
+    };
+
+    updateLocalProfile = model => e => {
         this.setState({profile: {...this.state.profile, [model]: e.target.value}});
     };
 
     static wrapWithGrid = (component, key) => <Grid item key={key} xs={11} md={7}>{component}</Grid>;
 }
 
-
 ProfileEditor.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    uid: PropTypes.string
 };
 
 ProfileEditor.styles = {};
