@@ -46,7 +46,8 @@ class ProfileEditor extends Component {
     componentDidMount() {
         this.unsubscribe = firebase.firestore().doc(`users/${this.props.uid || firebase.auth().currentUser.uid}`)
             .onSnapshot(snapshot => {
-                this.setState({profile: snapshot.data()});
+                const newProfile = Object.assign({}, this.state.profile);
+                this.setState({profile: Object.assign(newProfile, snapshot.data())});
             });
     }
 
@@ -114,15 +115,16 @@ class ProfileEditor extends Component {
         };
 
         updateButton("Updating...");
-        firebase.firestore().doc(`users/${this.props.uid || firebase.auth().currentUser.uid}`)
-            .set(this.state.profile)
+        let effectiveUID = this.props.uid || firebase.auth().currentUser.uid;
+        firebase.firestore().doc(`users/${effectiveUID}`)
+            .set({...this.state.profile, uid: effectiveUID})
             .then(() => {
                 const {profile} = this.state;
                 const liteProfile = {};
-                for (let liteField in settings.liteFields) {
-                    liteProfile[liteField] = profile[liteField];
+                for (let i = 0; i < settings.liteFields.length; i++) {
+                    liteProfile[settings.liteFields[i]] = profile[settings.liteFields[i]];
                 }
-                firebase.firestore().doc(`lite-users/${this.props.uid || firebase.auth().currentUser.uid}`)
+                firebase.firestore().doc(`lite-users/${effectiveUID}`)
                     .set(liteProfile)
                     .then(() => {
                         updateButton("Updated");

@@ -135,6 +135,14 @@ export default {
             },
             label: "Member Cards",
             minPermissionLevel: "Member"
+        },
+        {
+            async get() {
+                const Members = (await import('./views/Members')).default;
+                return <Members variant={"table"}/>
+            },
+            label: "Member Table",
+            minPermissionLevel: "Officer"
         }
     ]
 };

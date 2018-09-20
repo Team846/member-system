@@ -10,19 +10,27 @@ import settings from "../settings";
 import MenuItem from "@material-ui/core/MenuItem/MenuItem";
 import {toTitleCase} from "../helpers";
 import MemberCards from "../components/MemberCards";
+import MemberTable from "../components/MemberTable";
+import firebase from 'firebase/app';
 
 class Members extends Component {
+    componentDidMount() {
+        this.unsubscribe = firebase.firestore().collection('users').onSnapshot(snapshot => {
+            let users = snapshot.docs.map(doc => doc.data());
+            this.setState({users: users});
+        });
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
+
     constructor(props) {
         super(props);
         this.state = {
             filterBy: "any",
             filterText: "",
-            users: [{
-                firstName: "Aanand",
-                lastName: "Kainth",
-                emailAddress: "akainth015@gmail.com",
-                primaryPhoneNumber: "(408) 480-2845"
-            }]
+            users: []
         }
     }
 
@@ -67,6 +75,7 @@ class Members extends Component {
                     </Grid>
                     {this.props.variant === "cards" && <MemberCards users={filteredUsers}/>}
                 </div>
+                {this.props.variant === "table" && <MemberTable users={filteredUsers}/>}
             </Fragment>
         );
     }

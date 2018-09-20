@@ -18,7 +18,7 @@ class MemberCards extends Component {
                     this.props.users
                         .map(user => {
                             return (
-                                <Grid item xs={12} md={4} lg={3}>
+                                <Grid key={user.uid} item xs={12} md={4} lg={3}>
                                     <Card>
                                         <CardContent>
                                             <Typography

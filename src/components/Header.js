@@ -13,6 +13,7 @@ import ListItemText from "@material-ui/core/ListItemText/ListItemText";
 import ListItem from "@material-ui/core/ListItem/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon/ListItemIcon";
 import List from "@material-ui/core/List/List";
+import firebase from 'firebase/app';
 
 class Header extends Component {
     constructor(props) {
@@ -60,6 +61,9 @@ class Header extends Component {
                             </ListItem>
                         );
                     })}
+                    <ListItem button onClick={() => firebase.auth().signOut()}>
+                        <ListItemText>Sign Out</ListItemText>
+                    </ListItem>
                 </List>
             );
 
