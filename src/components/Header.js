@@ -14,6 +14,7 @@ import ListItem from "@material-ui/core/ListItem/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon/ListItemIcon";
 import List from "@material-ui/core/List/List";
 import firebase from 'firebase/app';
+import ActiveUser from "../contexts/ActiveUser";
 
 class Header extends Component {
     constructor(props) {
@@ -53,14 +54,18 @@ class Header extends Component {
                             {title}
                         </ListItem>
                     </Hidden>
-                    {settings.tabs.map(tab => {
-                        return (
-                            <ListItem button key={tab.label} onClick={this.onTabClicked(tab)}>
-                                <ListItemText>{tab.label}</ListItemText>
-                                {tab.icon && <ListItemIcon>{tab.icon}</ListItemIcon>}
-                            </ListItem>
-                        );
-                    })}
+                    <ActiveUser.Consumer>
+                        {user => settings.tabs
+                            .filter(tab => settings.permissionLevels.indexOf(user.permissionLevel) >= settings.permissionLevels.indexOf(tab.minPermissionLevel))
+                            .map(tab => {
+                                return (
+                                    <ListItem button key={tab.label} onClick={this.onTabClicked(tab)}>
+                                        <ListItemText>{tab.label}</ListItemText>
+                                        {tab.icon && <ListItemIcon>{tab.icon}</ListItemIcon>}
+                                    </ListItem>
+                                );
+                            })}
+                    </ActiveUser.Consumer>
                     <ListItem button onClick={() => firebase.auth().signOut()}>
                         <ListItemText>Sign Out</ListItemText>
                     </ListItem>
