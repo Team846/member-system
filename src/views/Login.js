@@ -25,6 +25,7 @@ class Login extends Component {
                 <Paper className={classes.paper}>
                     <form onSubmit={this.signIn}>
                         <TextField
+                            autoComplete={"username"}
                             fullWidth
                             label={"Email Address"}
                             margin={"dense"}
@@ -32,6 +33,7 @@ class Login extends Component {
                             type={"email"}
                             value={this.state.email}/>
                         <TextField
+                            autoComplete={"current-password"}
                             fullWidth
                             label={"Password"}
                             margin={"dense"}

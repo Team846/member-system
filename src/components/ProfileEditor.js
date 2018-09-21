@@ -18,28 +18,7 @@ class ProfileEditor extends Component {
         this.state = {
             buttonDisabled: false,
             buttonText: "Update",
-            profile: {
-                firstName: "",
-                lastName: "",
-                emailAddress: "",
-                primaryPhoneNumber: "",
-                primaryPhoneType: "Cell Phone",
-                secondaryPhoneNumber: "",
-                secondaryPhoneType: "Home Phone",
-                address: "",
-                gender: "Other",
-                role: "Student",
-                studentId: "",
-                graduationYear: String(new Date().getFullYear() + 4),
-                parent1FirstName: "",
-                parent1LastName: "",
-                parent1EmailAddress: "",
-                parent1Employer: "",
-                parent2FirstName: "",
-                parent2LastName: "",
-                parent2EmailAddress: "",
-                parent2Employer: ""
-            }
+            profile: settings.defaultProfile
         };
     }
 
@@ -124,6 +103,7 @@ class ProfileEditor extends Component {
                 for (let i = 0; i < settings.liteFields.length; i++) {
                     liteProfile[settings.liteFields[i]] = profile[settings.liteFields[i]];
                 }
+                liteProfile.uid = effectiveUID;
                 firebase.firestore().doc(`lite-users/${effectiveUID}`)
                     .set(liteProfile)
                     .then(() => {

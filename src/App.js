@@ -1,3 +1,4 @@
+import ActiveUser from './contexts/ActiveUser';
 import CssBaseline from "@material-ui/core/CssBaseline/CssBaseline";
 import Header, {drawerWidth} from './components/Header';
 import PropTypes from 'prop-types';
@@ -6,19 +7,33 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography/Typography";
 import firebase from "firebase/app";
 import Login from "./views/Login";
+import settings from "./settings";
 
 class App extends Component {
     componentDidMount() {
         firebase.auth().onAuthStateChanged(user => {
             this.setState({authenticated: user !== null});
+            if (user) {
+                this.unsubscribe = firebase.firestore().doc(`users/${user.uid}`)
+                    .onSnapshot(snapshot => {
+                        this.setState({user: Object.assign(this.state.user, snapshot.data())});
+                    });
+            } else {
+                this.unsubscribe();
+            }
         });
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
     }
 
     constructor(props) {
         super(props);
         this.state = {
             authenticated: false,
-            content: <Typography>Loading your profile...</Typography>
+            content: <Typography>Loading your profile...</Typography>,
+            user: settings.defaultProfile
         };
     }
 
@@ -29,10 +44,12 @@ class App extends Component {
 
         return (
             <React.Fragment>
-                <CssBaseline/>
-                <Header authenticated={authenticated} onNewContent={this.updateContent}/>
-                {authenticated && <div className={classes.content}>{this.state.content}</div>}
-                {!authenticated && <Login/>}
+                <ActiveUser.Provider value={this.state.user}>
+                    <CssBaseline/>
+                    <Header authenticated={authenticated} onNewContent={this.updateContent}/>
+                    {authenticated && <div className={classes.content}>{this.state.content}</div>}
+                    {!authenticated && <Login/>}
+                </ActiveUser.Provider>
             </React.Fragment>
         );
     }

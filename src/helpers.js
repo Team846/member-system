@@ -7,3 +7,13 @@ export function toTitleCase(string) {
         return wordTitleCase.join('');
     }).join('');
 }
+
+export function getFilteredUsers() {
+    return this.state.users.slice(0).filter(user => {
+        if (this.state.filterBy === "any") {
+            return Object.values(user).join('|;|').toLowerCase().includes(this.state.filterText.toLowerCase());
+        } else {
+            return (user[this.state.filterBy] || this.state.filterText).toLowerCase().includes(this.state.filterText.toLowerCase());
+        }
+    }).slice(0, 25);
+}

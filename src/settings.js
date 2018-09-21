@@ -27,6 +27,29 @@ export default {
         label: "Something went wrong...",
         type: "text"
     },
+    defaultProfile: {
+        firstName: "",
+        lastName: "",
+        emailAddress: "",
+        primaryPhoneNumber: "",
+        primaryPhoneType: "Cell Phone",
+        secondaryPhoneNumber: "",
+        secondaryPhoneType: "Home Phone",
+        address: "",
+        gender: "Other",
+        role: "Student",
+        studentId: "",
+        graduationYear: String(new Date().getFullYear() + 4),
+        parent1FirstName: "",
+        parent1LastName: "",
+        parent1EmailAddress: "",
+        parent1Employer: "",
+        parent2FirstName: "",
+        parent2LastName: "",
+        parent2EmailAddress: "",
+        parent2Employer: "",
+        permissionLevel: "Prospective"
+    },
     fields: [
         {
             label: "First Name"
@@ -119,6 +142,7 @@ export default {
         }
     ],
     liteFields: ['firstName', 'lastName', 'emailAddress', 'primaryPhoneNumber', 'primaryPhoneType'],
+    permissionLevels: ['Prospective', 'Tentative', 'Member', 'Officer', 'Mentor', 'Administrator'],
     tabs: [
         {
             async get() {
@@ -130,16 +154,16 @@ export default {
         },
         {
             async get() {
-                const Members = (await import('./views/Members')).default;
-                return <Members variant={"cards"}/>
+                const MemberCards = (await import('./views/MemberCards')).default;
+                return <MemberCards/>
             },
             label: "Member Cards",
             minPermissionLevel: "Member"
         },
         {
             async get() {
-                const Members = (await import('./views/Members')).default;
-                return <Members variant={"table"}/>
+                const MemberTable = (await import('./views/MemberTable')).default;
+                return <MemberTable/>
             },
             label: "Member Table",
             minPermissionLevel: "Officer"
