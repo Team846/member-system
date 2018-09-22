@@ -21,7 +21,7 @@ let phoneInputProps = {
 
 const isMentor = profile => profile.role === "Mentor", isStudent = profile => profile.role === "Student";
 
-export default {
+const settings = {
     defaultField: {
         condition: () => true,
         label: "Something went wrong...",
@@ -48,7 +48,8 @@ export default {
         parent2LastName: "",
         parent2EmailAddress: "",
         parent2Employer: "",
-        permissionLevel: "Prospective"
+        permissionLevel: "Prospective",
+        teams: []
     },
     fields: [
         {
@@ -85,6 +86,12 @@ export default {
         {
             label: "Gender",
             options: ["Male", "Female", "Other"],
+            type: "select"
+        },
+        {
+            label: "Teams",
+            multiple: true,
+            options: ["Hardware", "Software", "Electrical", "Animation", "Design"],
             type: "select"
         },
         {
@@ -170,3 +177,11 @@ export default {
         }
     ]
 };
+
+settings.officerFields = [{
+    label: "Permission Level",
+    options: settings.permissionLevels,
+    type: "select"
+}];
+
+export default settings;

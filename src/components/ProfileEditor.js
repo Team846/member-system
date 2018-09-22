@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from "@material-ui/core/Grid/Grid";
 import settings from "../settings";
@@ -11,6 +11,7 @@ import Select from "@material-ui/core/Select/Select";
 import MenuItem from "@material-ui/core/MenuItem/MenuItem";
 import firebase from "firebase/app";
 import Button from "@material-ui/core/Button/Button";
+import ActiveUser from "../contexts/ActiveUser";
 
 class ProfileEditor extends Component {
     constructor(props) {
@@ -37,6 +38,40 @@ class ProfileEditor extends Component {
     render() {
         const {profile} = this.state;
 
+
+        const createComponentFromField = field => {
+            let component = null;
+            // noinspection JSUnusedLocalSymbols
+            const {condition, model, ...filtered} = field;
+            switch (field.type) {
+                case 'select':
+                    component = (
+                        <FormControl fullWidth margin={"dense"}>
+                            <InputLabel htmlFor={field.model}>{field.label}</InputLabel>
+                            <Select
+                                {...filtered}
+                                inputProps={{id: field.model}}
+                                onChange={this.updateLocalProfile(model)}
+                                value={profile[model]}>
+                                {field.options
+                                    .map(option => <MenuItem key={option} value={option}>
+                                        {option}
+                                    </MenuItem>)}
+                            </Select>
+                        </FormControl>
+                    );
+                    break;
+                default:
+                    component = (
+                        <TextField
+                            {...filtered}
+                            fullWidth
+                            margin={"dense"}
+                            onChange={this.updateLocalProfile(model)}
+                            value={profile[model]}/>)
+            }
+            return ProfileEditor.wrapWithGrid(component, field.label);
+        };
         return (
             <Grid justify={"center"} container>
                 {
@@ -45,39 +80,23 @@ class ProfileEditor extends Component {
                             model: toTitleCase(field.label)
                         }, field))
                         .filter(field => field.condition(profile))
-                        .map(field => {
-                            let component = null;
-                            // noinspection JSUnusedLocalSymbols
-                            const {condition, model, ...filtered} = field;
-                            switch (field.type) {
-                                case 'select':
-                                    component = (
-                                        <FormControl fullWidth margin={"dense"}>
-                                            <InputLabel htmlFor={field.model}>{field.label}</InputLabel>
-                                            <Select
-                                                inputProps={{id: field.model}}
-                                                onChange={this.updateLocalProfile(model)}
-                                                value={profile[model]}>
-                                                {field.options
-                                                    .map(option => <MenuItem key={option} value={option}>
-                                                        {option}
-                                                    </MenuItem>)}
-                                            </Select>
-                                        </FormControl>
-                                    );
-                                    break;
-                                default:
-                                    component = (
-                                        <TextField
-                                            {...filtered}
-                                            fullWidth
-                                            margin={"dense"}
-                                            onChange={this.updateLocalProfile(model)}
-                                            value={profile[model]}/>)
-                            }
-                            return ProfileEditor.wrapWithGrid(component, field.label);
-                        })
+                        .map(createComponentFromField)
                 }
+                <ActiveUser.Consumer>
+                    {activeUser => {
+                        if (settings.permissionLevels.indexOf(activeUser.permissionLevel) >= settings.permissionLevels.indexOf("Officer")) {
+                            return <Fragment>
+                                {
+                                    settings.officerFields
+                                        .map(field => Object.assign({}, settings.defaultField, {
+                                            model: toTitleCase(field.label)
+                                        }, field))
+                                        .map(createComponentFromField)
+                                }
+                            </Fragment>
+                        } else return null;
+                    }}
+                </ActiveUser.Consumer>
                 {ProfileEditor.wrapWithGrid(<Button disabled={this.state.buttonDisabled} fullWidth
                                                     onClick={this.updateRemoteProfile}>{this.state.buttonText}</Button>)}
             </Grid>
