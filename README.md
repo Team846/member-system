@@ -27,3 +27,8 @@ This will run all `*.test.js` files in the `src` folder and generate a report.
 ~~~
 npm run test
 ~~~
+
+## Notes
+The properties stored in the database are found by calling the `toTitleCase` method on the field's label attribute. The
+resulting properties can be found in the `settings.defaultProfile` object. The two attributes not found there are `uid`,
+and `permissionLevel`. These are injected through the ProfileEditor after fetching data from Firebase.

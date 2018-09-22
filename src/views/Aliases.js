@@ -61,6 +61,8 @@ class Aliases extends Component {
     render() {
         return (
             <div style={{margin: 16}}>
+                <Typography>Filter rules EXPAND the users selected, so a "Permission Level, Member", and a "Permission
+                    Level, Officer" will send to both members and officers</Typography>
                 {this.state.aliases.map(alias =>
                     <ExpansionPanel key={alias.id}>
                         <ExpansionPanelSummary>
