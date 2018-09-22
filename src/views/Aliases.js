@@ -90,9 +90,11 @@ class Aliases extends Component {
                                                         onChange={this.editFilterFieldForAlias(alias.id, filter.id, "by")}
                                                         value={filter.by}>
                                                     {settings.fields
-                                                        .map(field => <MenuItem
-                                                            key={toTitleCase(field.label)}
-                                                            value={toTitleCase(field.label)}>{field.label}</MenuItem>)}
+                                                        .map(field => field.label)
+                                                        .concat(["Permission Level", "UID"])
+                                                        .map(label => <MenuItem
+                                                            key={toTitleCase(label)}
+                                                            value={toTitleCase(label)}>{label}</MenuItem>)}
                                                 </Select>
                                             </FormControl>
                                         </Grid>
@@ -129,6 +131,7 @@ class Aliases extends Component {
                                     .then(() => alert("Updated mail system"))
                                     .catch(e => {
                                         console.error(e);
+                                        alert("Failed to update mail system")
                                     });
                             }
                         });
