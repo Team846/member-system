@@ -1,222 +1,116 @@
-import React, {Component} from 'react';
-import {Grid, IconButton, Modal, Paper, Table, TableBody, TableCell, TableRow, Typography} from '@material-ui/core';
-import './MemberCards.css';
-import firebase from 'firebase/app'
-import {ArrowBack, Home, Mail, Phone, Wc} from '@material-ui/icons';
-import {levels} from "../settings";
-import MemberCard from '../components/MemberCard';
-import InputField from "../components/InputField";
-import Profile from "./Profile";
-import SelectField from "../components/SelectField";
+import Back from "@material-ui/icons/ArrowBack";
+import Edit from "@material-ui/icons/Edit";
+import Phone from '@material-ui/icons/Phone';
+import Mail from '@material-ui/icons/Mail';
+import React, {Component, Fragment} from 'react';
+import Grid from "@material-ui/core/Grid/Grid";
+import Card from "@material-ui/core/Card/Card";
+import CardContent from "@material-ui/core/CardContent/CardContent";
+import Typography from "@material-ui/core/Typography/Typography";
+import IconButton from "@material-ui/core/IconButton/IconButton";
+import Checkbox from "@material-ui/core/Checkbox/Checkbox";
+import Hidden from "@material-ui/core/Hidden/Hidden";
+import ActiveUser from "../contexts/ActiveUser";
+import settings from "../settings";
+import firebase from "firebase/app";
+import FilterTools from "../components/FilterTools";
+import MenuItem from "@material-ui/core/MenuItem/MenuItem";
+import {toTitleCase} from "../helpers";
+import ProfileEditor from "../components/ProfileEditor";
 
 class MemberCards extends Component {
     componentDidMount() {
-        this.subscriber = firebase.firestore().collection('users').onSnapshot(snapshot => {
-            this.setState({
-                users: snapshot.docs.map(doc => doc.data())
-            });
+        this.unsubscribe = firebase.firestore().collection('lite-users').onSnapshot(snapshot => {
+            let users = snapshot.docs.map(doc => doc.data());
+            this.setState({users: users});
         });
     }
 
     componentWillUnmount() {
-        this.subscriber();
+        this.unsubscribe();
     }
 
     constructor(props) {
         super(props);
         this.state = {
-            allowEdits: false,
-            editMode: false,
-            filterBy: this.filters[0],
+            editMode: null,
+            filterBy: "any",
             filterText: "",
-            modal: {
-                open: false,
-                uid: null
-            },
-            selectedUsers: [],
             users: []
         }
     }
 
-    filters = [{
-        filter: user => {
-            return Object.values(user).some(it => String(it).toLowerCase().includes(this.state.filterText.toLowerCase()));
-        },
-        name: "All",
-        type: "function"
-    }, {
-        map: "name",
-        name: "Name",
-    }, {
-        map: "email",
-        name: "Email"
-    }, {
-        filter: user => {
-            return user.division.join(', ').toLowerCase().includes(this.state.filterText.toLowerCase());
-        },
-        name: "Division",
-        type: "function"
-    }, {
-        map: "gender",
-        name: "Gender"
-    }, {
-        map: "role",
-        name: "Role"
-    }, {
-        filter: user => {
-            return levels[user.level].toLowerCase().includes(this.state.filterText.toLowerCase());
-        },
-        name: "Level",
-        type: "function"
-    }];
-
-    onEdit = uid => () => {
-        this.setState({
-            // allowEdits: true,
-            editMode: true,
-            modal: {
-                open: false,
-                uid
-            }
-        });
-    };
-
-    openModal = uid => () => {
-        this.setState({
-            modal: {
-                open: true,
-                uid
-            }
-        })
-    };
-
-    onSelectClicked = uid => e => {
-        const selected = this.state.selectedUsers.slice(0);
-        if (e.target.checked) {
-            selected.push(uid);
-            this.setState({
-                selectedUsers: selected
-            });
-        } else {
-            selected.splice(selected.indexOf(uid), 1);
-            this.setState({
-                selectedUsers: selected
-            });
-        }
-    };
-
     render() {
-        let fields = [{
-            left: <Mail/>,
-            model: "email"
-        }, {
-            left: <Phone/>,
-            model: "cell"
-        }, {
-            left: <Phone/>,
-            model: "home"
-        }, {
-            left: <Home/>,
-            model: "address",
-        }, {
-            left: <Wc/>,
-            model: "gender"
-        }, {
-            left: "Division",
-            model: "division",
-            transform: value => value.join(', ')
-        }, {
-            left: "Role",
-            model: "role"
-        }];
-        let user = this.state.users.find(user => user.uid === this.state.modal.uid);
-        let currentUser = this.state.users.find(user => user.uid === firebase.auth().currentUser.uid) || {};
-
-        function createTableRow(i, value) {
-            return <TableRow key={i}>
-                <TableCell className={"left-cell"}>{value.left}</TableCell>
-                <TableCell className={"right-cell"}>
-                    <Typography>
-                        {(value.transform || (value => value))(user[value.model])}
-                    </Typography>
-                </TableCell>
-            </TableRow>;
-        }
+        const filteredUsers = this.state.users.slice(0).filter(user => {
+            if (this.state.filterBy === "any") {
+                return Object.values(user).join('|;|').toLowerCase().includes(this.state.filterText.toLowerCase());
+            } else {
+                return (user[this.state.filterBy] || this.state.filterText).toLowerCase().includes(this.state.filterText.toLowerCase());
+            }
+        }).slice(0, 25);
 
         return (
-            <div className={"MemberCards"}>
-                {!this.state.editMode &&
-                <Grid container spacing={16}>
-                    <Grid item xs={12} md={6}>
-                        <SelectField
-                            label={"Filter By"}
-                            model={"filter-by"}
-                            onChange={e => this.setState({
-                                filterBy: this.filters.find(value => value.name === e.target.value)
-                            })}
-                            options={this.filters.map(it => it.name)}
-                            value={this.state.filterBy.name}/>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <InputField
-                            label={"Filter Text"}
-                            onChange={e => this.setState({filterText: e.target.value})}
-                            value={this.state.filterText}/>
-                    </Grid>
-                    {this.state.users.length === 0 && <Typography variant={"display1"}>No members </Typography>}
-                    {this.state.users
-                        .filter(user => {
-                            if (this.state.filterBy.type === 'function') {
-                                return this.state.filterBy.filter(user);
-                            } else {
-                                return String(user[this.state.filterBy.map]).toLowerCase().includes(this.state.filterText.toLowerCase());
-                            }
-                        })
-                        .map(user => <MemberCard
-                            allowEdit={currentUser.level >= levels.indexOf('Officer')}
-                            key={user.uid}
-                            onEditClicked={this.onEdit(user.uid)}
-                            onInfoClicked={this.openModal(user.uid)}
-                            onChange={this.onSelectClicked(user.uid)}
-                            selected={this.state.selectedUsers.indexOf(user.uid) !== -1}
-                            user={user}/>)}
-                </Grid>}
-                {this.state.editMode &&
-                <IconButton onClick={() => this.setState({editMode: false})}><ArrowBack/></IconButton>}
-                {this.state.editMode && <Profile asAdmin={true} uid={this.state.modal.uid}/>}
-                {this.state.modal.open === true && <Modal
-                    onClose={() => this.setState({
-                        modal: {
-                            open: false,
-                            uid: null
+            this.state.editMode ?
+                <Fragment>
+                    <IconButton onClick={() => this.setState({editMode: null})}>
+                        <Back/>
+                    </IconButton>
+                    <ProfileEditor uid={this.state.editMode}/></Fragment>
+                : <div style={{padding: 32}}>
+                    <FilterTools onChange={this.updateStateField("filterText")} value={this.state.filterText}
+                                 value1={this.state.filterBy} onChange1={this.updateStateField("filterBy")}
+                                 callbackfn={liteField => <MenuItem
+                                     key={liteField}
+                                     value={liteField}>
+                                     {settings.fields.find(field => toTitleCase(field.label) === liteField).label}
+                                 </MenuItem>}/>
+                    <Grid container spacing={32}>
+                        {
+                            filteredUsers
+                                .map(user => {
+                                    return (
+                                        <Grid key={user.uid} item xs={12} md={4} lg={3}>
+                                            <Card>
+                                                <CardContent>
+                                                    <Typography
+                                                        variant={"headline"}>{user.firstName} {user.lastName}</Typography>
+                                                    <Checkbox/>
+                                                    <Hidden mdUp>
+                                                        {user.primaryPhoneNumber && user.primaryPhoneNumber !== "" &&
+                                                        <IconButton
+                                                            onClick={() => window.open(`tel:${user.primaryPhoneNumber}`)}>
+                                                            <Phone/>
+                                                        </IconButton>}
+                                                        <Fragment/>
+                                                    </Hidden>
+                                                    {user.emailAddress && user.emailAddress !== "" &&
+                                                    <IconButton
+                                                        onClick={() => window.open(`mailto:${user.emailAddress}`)}>
+                                                        <Mail/>
+                                                    </IconButton>}
+                                                    <ActiveUser.Consumer>
+                                                        {activeUser => <Fragment>
+                                                            {
+                                                                settings.permissionLevels.indexOf(activeUser.permissionLevel) >= settings.permissionLevels.indexOf('Officer') &&
+                                                                <IconButton
+                                                                    onClick={() => this.setState({editMode: user.uid})}>
+                                                                    <Edit/>
+                                                                </IconButton>}
+                                                        </Fragment>}
+                                                    </ActiveUser.Consumer>
+                                                </CardContent>
+                                            </Card>
+                                        </Grid>
+                                    )
+                                })
                         }
-                    })}
-                    open={this.state.modal.open}>
-                    <Grid className={"modal-grid"} alignItems={"center"} container justify={"center"}>
-                        <Grid item xs={11} md={6}>
-                            <Paper className={"modal-paper"}>
-                                <Typography variant={"headline"}>{user.name}</Typography>
-                                <Table>
-                                    <TableBody>
-                                        {fields.map((value, i) => {
-                                            return createTableRow(i, value)
-                                        })}
-                                        {user.role === 'Student' && createTableRow(fields.length, {
-                                            left: "Graduation Year",
-                                            model: "graduation"
-                                        })}
-                                        {['Adult', 'Mentor'].indexOf(user.role) !== -1 && createTableRow(fields.length, {
-                                            left: "Employer",
-                                            model: "employer"
-                                        })}
-                                    </TableBody>
-                                </Table>
-                            </Paper>
-                        </Grid>
                     </Grid>
-                </Modal>}
-            </div>
+                </div>
         );
+    }
+
+    updateStateField = field => e => {
+        this.setState({[field]: e.target.value});
     }
 }
 

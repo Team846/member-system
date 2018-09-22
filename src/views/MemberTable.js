@@ -1,98 +1,140 @@
-import React, {Component} from "react"
-import {Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel} from "@material-ui/core"
+import PropTypes from 'prop-types';
+import React, {Component, Fragment} from "react";
+import Table from "@material-ui/core/Table/Table";
+import TableHead from "@material-ui/core/TableHead/TableHead";
+import settings from "../settings";
+import TableRow from "@material-ui/core/TableRow/TableRow";
+import TableCell from "@material-ui/core/TableCell/TableCell";
+import TableSortLabel from "@material-ui/core/TableSortLabel/TableSortLabel";
+import {toTitleCase} from "../helpers";
+import withStyles from "@material-ui/core/styles/withStyles";
+import TableBody from "@material-ui/core/TableBody/TableBody";
+import {drawerWidth} from "../components/Header";
 import firebase from "firebase/app";
-import fields from "../fields"
-
-function getSorting(order, orderBy) {
-    return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
-}
-
-function desc(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
+import {getFilteredUsers} from '../helpers';
+import MenuItem from "@material-ui/core/MenuItem/MenuItem";
+import FilterTools from "../components/FilterTools";
 
 class MemberTable extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            users: [],
-            orderedBy: "Name",
-            orderDir: 'asc'
-        }
-
-    }
-
     componentDidMount() {
-        this.subscriber = firebase.firestore().collection('users').onSnapshot(snapshot => {
-            this.setState({
-                users: snapshot.docs.map(doc => doc.data())
-            });
+        this.unsubscribe = firebase.firestore().collection('users').onSnapshot(snapshot => {
+            let users = snapshot.docs.map(doc => doc.data());
+            this.setState({users: users});
         });
     }
 
     componentWillUnmount() {
-        this.subscriber();
+        this.unsubscribe();
     }
 
-    changeSortDir = label => e => {
-        if (this.state.orderedBy === label) {
-            this.setState({
-                orderDir: this.state.orderDir === 'asc' ? 'desc' : 'asc'
-            });
-            return
+    constructor(props) {
+        super(props);
+        this.state = {
+            filterBy: "any",
+            filterText: "",
+            sortBy: "firstName",
+            sortDir: "desc",
+            users: []
         }
-        this.setState({
-            orderedBy: label
-        })
+    }
+
+    onSortLabelClick = field => () => {
+        if (this.state.sortBy === toTitleCase(field.label)) {
+            this.setState({
+                sortDir: this.state.sortDir === 'desc' ? 'asc' : 'desc'
+            });
+        } else {
+            this.setState({
+                sortBy: toTitleCase(field.label)
+            });
+        }
     };
 
     render() {
-        if (!this.state.users) return null;
+        const {classes} = this.props;
+
+        const filteredUsers = getFilteredUsers.call(this);
 
         return (
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        {
-                            fields.map(column => {
-                                    return <TableCell key={column.label}>
-                                        <TableSortLabel
-                                            active={this.state.orderedBy === column.label}
-                                            direction={this.state.orderDir}
-                                            onClick={this.changeSortDir(column.label)}
-                                        />
-                                        {column.label}
-                                    </TableCell>
+            <Fragment>
+                <div style={{padding: 32}}>
+                    <FilterTools onChange={this.updateStateField("filterText")} value={this.state.filterText}
+                                 value1={this.state.filterBy} onChange1={this.updateStateField("filterBy")}
+                                 callbackfn={liteField => <MenuItem
+                                     key={liteField}
+                                     value={liteField}>
+                                     {settings.fields.find(field => toTitleCase(field.label) === liteField).label}
+                                 </MenuItem>}/>
+                </div>
+                <div className={classes.table}>
+                    <Table>
+                        <TableHead className={classes.tHead}>
+                            <TableRow>
+                                {
+                                    settings.fields.map(field => {
+                                        return <TableCell key={field.label}>
+                                            <TableSortLabel active={this.state.sortBy === toTitleCase(field.label)}
+                                                            direction={this.state.sortDir}
+                                                            onClick={this.onSortLabelClick(field)}>
+                                                {field.label}
+                                            </TableSortLabel>
+                                        </TableCell>
+                                    })
                                 }
-                            )
-                        }
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {
-                        this.state.users
-                            .sort(getSorting(this.state.orderDir, fields.find(col => col.label === this.state.orderedBy).model))
-                            .map(user =>
-                                <TableRow key={user.uid}>
-                                    {fields
-                                        .map(column => {
-                                            return <TableCell key={column.model}>
-                                                {user[column.model]}
-                                            </TableCell>
-                                        })}
-                                </TableRow>
-                            )
-                    }
-                </TableBody>
-            </Table>
-        )
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {
+                                filteredUsers
+                                    .sort((a, b) => {
+                                        let output = 0;
+                                        if (a[this.state.sortBy] < b[this.state.sortBy]) output = -1;
+                                        else if (a[this.state.sortBy] > b[this.state.sortBy]) output = 1;
+                                        else return 0;
+
+                                        if (this.state.sortDir === 'asc') return -output; else return output;
+                                    })
+                                    .map(user => <TableRow key={user.uid}>
+                                        {
+                                            settings.fields.map(field =>
+                                                <TableCell
+                                                    key={field.label}>{user[toTitleCase(field.label)]}</TableCell>)
+                                        }
+                                    </TableRow>)
+                            }
+                        </TableBody>
+                    </Table>
+                </div>
+            </Fragment>
+        );
+    }
+
+    updateStateField = field => e => {
+        this.setState({[field]: e.target.value});
     }
 }
 
-export default MemberTable
+MemberTable.propTypes = {
+    classes: PropTypes.object.isRequired
+};
+
+MemberTable.styles = theme => ({
+    table: {
+        overflowX: 'scroll',
+        width: '100vw',
+        [theme.breakpoints.up('md')]: {
+            width: `calc(100vw - ${drawerWidth}px)`
+        }
+    },
+    tHead: {
+        '& *': {
+            whiteSpace: 'nowrap'
+        },
+        backgroundColor: theme.palette.background.default,
+        boxShadow: "0px 3px 5px grey",
+        position: 'sticky',
+        top: 64
+    }
+});
+
+export default withStyles(MemberTable.styles)(MemberTable);
