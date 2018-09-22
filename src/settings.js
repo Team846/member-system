@@ -173,7 +173,7 @@ const settings = {
                 return <MemberTable/>
             },
             label: "Member Table",
-            minPermissionLevel: "Officer"
+            minPermissionLevel: "Member"
         },
         {
             async get() {
