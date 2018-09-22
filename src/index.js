@@ -31,9 +31,9 @@ firebase.firestore().settings({
     timestampsInSnapshots: true
 });
 
-firebase.firestore().enablePersistence()
-    .then(() => console.info("Offline persistence enabled"))
-    .catch(e => console.warn("Failed to enable offline persistence", e));
+// firebase.firestore().enablePersistence()
+//     .then(() => console.info("Offline persistence enabled"))
+//     .catch(e => console.warn("Failed to enable offline persistence", e));
 
 ReactDOM.render(<App/>, document.getElementById('root'));
 registerServiceWorker();

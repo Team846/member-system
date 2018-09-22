@@ -72,23 +72,22 @@ class Login extends Component {
                                 switch (e.code) {
                                     case 'auth/wrong-password':
                                         setButton("Wrong Password");
-                                        this.scheduleButtonReset();
                                         break;
                                     default:
                                         setButton("Failed");
-                                        this.scheduleButtonReset();
                                         break;
                                 }
+                                this.scheduleButtonReset();
                             });
                         break;
                     case 'auth/weak-password':
                         setButton('Weak Password');
-                        this.scheduleButtonReset();
                         break;
                     default:
                         setButton("Failed");
                         break;
                 }
+                this.scheduleButtonReset();
             });
     };
 
