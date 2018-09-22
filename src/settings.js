@@ -174,6 +174,14 @@ const settings = {
             },
             label: "Member Table",
             minPermissionLevel: "Officer"
+        },
+        {
+            async get() {
+                const Aliases = (await import('./views/Aliases')).default;
+                return <Aliases/>
+            },
+            label: "Aliases",
+            minPermissionLevel: "Officer"
         }
     ]
 };
