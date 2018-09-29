@@ -22,6 +22,9 @@ class App extends Component {
                 this.unsubscribe();
             }
         });
+        settings.tabs[0].get().then(tab => {
+            this.setState({content: tab});
+        });
     }
 
     componentWillUnmount() {
