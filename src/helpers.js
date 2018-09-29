@@ -37,3 +37,14 @@ export const copyToClipboard = str => {
         document.getSelection().addRange(selected);   // Restore the original selection
     }
 };
+
+export function model(model, onChange = "onChange", value = "value", getValue = e => e.target.value) {
+    const context = this;
+    return {
+        id: model,
+        [onChange]() {
+            context.setState({[model]: getValue(...arguments)});
+        },
+        [value]: context.state.value
+    }
+}

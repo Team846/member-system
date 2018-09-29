@@ -182,6 +182,14 @@ const settings = {
             },
             label: "Aliases",
             minPermissionLevel: "Officer"
+        },
+        {
+            async get() {
+                const ChangePassword = (await import('./views/ChangePassword')).default;
+                return <ChangePassword/>;
+            },
+            label: "Password Change",
+            minPermissionLevel: "Prospective"
         }
     ]
 };
