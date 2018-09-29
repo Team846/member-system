@@ -8,39 +8,47 @@ import MenuItem from "@material-ui/core/MenuItem/MenuItem";
 import settings from "../settings";
 import PropTypes from "prop-types";
 import React from "react";
+import IconButton from "@material-ui/core/IconButton/IconButton";
+import Mail from "@material-ui/icons/Mail";
 
 class FilterTools extends Component {
     render() {
         return <Grid container spacing={16}>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
                 <TextField
                     fullWidth
-                    onChange={this.props.onChange}
+                    onChange={this.props.onFilterTextChange}
                     label={"Filter"}
-                    value={this.props.value}/>
+                    value={this.props.filterText}/>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
                 <FormControl fullWidth>
                     <InputLabel htmlFor={"filter-by"}>Filter By</InputLabel>
                     <Select
                         inputProps={{id: "filter-by"}}
-                        value={this.props.value1}
-                        onChange={this.props.onChange1}>
+                        value={this.props.filterBy}
+                        onChange={this.props.onFilterByChange}>
                         <MenuItem value={"any"}>Any</MenuItem>
-                        {settings.liteFields.map(this.props.callbackfn)}
+                        {settings.liteFields.map(this.props.liteFieldsToMenuItem)}
                     </Select>
                 </FormControl>
+            </Grid>
+            <Grid item xs={12} md={4}>
+                <IconButton onClick={this.props.onMailIconButtonClicked}>
+                    <Mail/>
+                </IconButton>
             </Grid>
         </Grid>;
     }
 }
 
 FilterTools.propTypes = {
-    onChange: PropTypes.any,
-    value: PropTypes.string,
-    value1: PropTypes.string,
-    onChange1: PropTypes.any,
-    callbackfn: PropTypes.func
+    onFilterTextChange: PropTypes.func,
+    filterText: PropTypes.string,
+    filterBy: PropTypes.string,
+    onFilterByChange: PropTypes.func,
+    liteFieldsToMenuItem: PropTypes.func,
+    onMailIconButtonClicked: PropTypes.func
 };
 
 export default FilterTools;

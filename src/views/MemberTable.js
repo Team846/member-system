@@ -6,7 +6,7 @@ import settings from "../settings";
 import TableRow from "@material-ui/core/TableRow/TableRow";
 import TableCell from "@material-ui/core/TableCell/TableCell";
 import TableSortLabel from "@material-ui/core/TableSortLabel/TableSortLabel";
-import {getFilteredUsers, toTitleCase} from "../helpers";
+import {copyToClipboard, getFilteredUsers, toTitleCase} from "../helpers";
 import withStyles from "@material-ui/core/styles/withStyles";
 import TableBody from "@material-ui/core/TableBody/TableBody";
 import firebase from "firebase/app";
@@ -56,13 +56,24 @@ class MemberTable extends Component {
         return (
             <Fragment>
                 <div style={{padding: 32}}>
-                    <FilterTools onChange={this.updateStateField("filterText")} value={this.state.filterText}
-                                 value1={this.state.filterBy} onChange1={this.updateStateField("filterBy")}
-                                 callbackfn={liteField => <MenuItem
-                                     key={liteField}
-                                     value={liteField}>
-                                     {settings.fields.find(field => toTitleCase(field.label) === liteField).label}
-                                 </MenuItem>}/>
+                    <FilterTools
+                        onMailIconButtonClicked={() => {
+                            copyToClipboard(filteredUsers
+                                .filter(user => user.emailAddress && user.emailAddress.trim() !== "")
+                                .map(user => (user.firstName.trim() !== "" && user.lastName.trim() !== "")
+                                    ? `"${user.firstName} ${user.lastName}" <${user.emailAddress}>`
+                                    : user.emailAddress)
+                                .join(",\n"));
+                            alert("Copied to clipboard...");
+                        }}
+                        onFilterTextChange={this.updateStateField("filterText")}
+                        filterText={this.state.filterText}
+                        filterBy={this.state.filterBy} onFilterByChange={this.updateStateField("filterBy")}
+                        liteFieldsToMenuItem={liteField => <MenuItem
+                            key={liteField}
+                            value={liteField}>
+                            {settings.fields.find(field => toTitleCase(field.label) === liteField).label}
+                        </MenuItem>}/>
                 </div>
                 <div>
                     <Table>
@@ -70,7 +81,7 @@ class MemberTable extends Component {
                             <TableRow>
                                 {
                                     settings.fields.map(field => {
-                                        return <TableCell key={field.label}>
+                                        return <TableCell key={field.label} padding={"dense"}>
                                             <TableSortLabel active={this.state.sortBy === toTitleCase(field.label)}
                                                             direction={this.state.sortDir}
                                                             onClick={this.onSortLabelClick(field)}>
@@ -96,6 +107,7 @@ class MemberTable extends Component {
                                         {
                                             settings.fields.map(field =>
                                                 <TableCell
+                                                    padding={"dense"}
                                                     key={field.label}>{user[toTitleCase(field.label)]}</TableCell>)
                                         }
                                     </TableRow>)

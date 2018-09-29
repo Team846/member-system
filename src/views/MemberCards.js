@@ -57,53 +57,54 @@ class MemberCards extends Component {
                     </IconButton>
                     <ProfileEditor uid={this.state.editMode}/></Fragment>
                 : <div style={{padding: 32}}>
-                    <FilterTools onChange={this.updateStateField("filterText")} value={this.state.filterText}
-                                 value1={this.state.filterBy} onChange1={this.updateStateField("filterBy")}
-                                 callbackfn={liteField => <MenuItem
-                                     key={liteField}
-                                     value={liteField}>
-                                     {settings.fields.find(field => toTitleCase(field.label) === liteField).label}
-                                 </MenuItem>}/>
+                    <FilterTools
+                        onFilterTextChange={this.updateStateField("filterText")}
+                        filterText={this.state.filterText}
+                        filterBy={this.state.filterBy}
+                        onFilterByChange={this.updateStateField("filterBy")}
+                        liteFieldsToMenuItem={liteField => <MenuItem
+                            key={liteField}
+                            value={liteField}>
+                            {settings.fields.find(field => toTitleCase(field.label) === liteField).label}
+                        </MenuItem>}/>
                     <Grid container spacing={32}>
-                        {
-                            filteredUsers
-                                .map(user => {
-                                    return (
-                                        <Grid key={user.uid} item xs={12} md={4} lg={3}>
-                                            <Card>
-                                                <CardContent>
-                                                    <Typography
-                                                        variant={"headline"}>{user.firstName} {user.lastName}</Typography>
-                                                    <Checkbox/>
-                                                    <Hidden mdUp>
-                                                        {user.primaryPhoneNumber && user.primaryPhoneNumber !== "" &&
-                                                        <IconButton
-                                                            onClick={() => window.open(`tel:${user.primaryPhoneNumber}`)}>
-                                                            <Phone/>
-                                                        </IconButton>}
-                                                        <Fragment/>
-                                                    </Hidden>
-                                                    {user.emailAddress && user.emailAddress !== "" &&
+                        {filteredUsers
+                            .map(user => {
+                                return (
+                                    <Grid key={user.uid} item xs={12} md={4} lg={3}>
+                                        <Card>
+                                            <CardContent>
+                                                <Typography
+                                                    variant={"headline"}>{user.firstName} {user.lastName}</Typography>
+                                                <Checkbox/>
+                                                <Hidden mdUp>
+                                                    {user.primaryPhoneNumber && user.primaryPhoneNumber !== "" &&
                                                     <IconButton
-                                                        onClick={() => window.open(`mailto:${user.emailAddress}`)}>
-                                                        <Mail/>
+                                                        onClick={() => window.open(`tel:${user.primaryPhoneNumber}`)}>
+                                                        <Phone/>
                                                     </IconButton>}
-                                                    <ActiveUser.Consumer>
-                                                        {activeUser => <Fragment>
-                                                            {
-                                                                settings.permissionLevels.indexOf(activeUser.permissionLevel) >= settings.permissionLevels.indexOf('Officer') &&
-                                                                <IconButton
-                                                                    onClick={() => this.setState({editMode: user.uid})}>
-                                                                    <Edit/>
-                                                                </IconButton>}
-                                                        </Fragment>}
-                                                    </ActiveUser.Consumer>
-                                                </CardContent>
-                                            </Card>
-                                        </Grid>
-                                    )
-                                })
-                        }
+                                                    <Fragment/>
+                                                </Hidden>
+                                                {user.emailAddress && user.emailAddress !== "" &&
+                                                <IconButton
+                                                    onClick={() => window.open(`mailto:${user.emailAddress}`)}>
+                                                    <Mail/>
+                                                </IconButton>}
+                                                <ActiveUser.Consumer>
+                                                    {activeUser => <Fragment>
+                                                        {
+                                                            settings.permissionLevels.indexOf(activeUser.permissionLevel) >= settings.permissionLevels.indexOf('Officer') &&
+                                                            <IconButton
+                                                                onClick={() => this.setState({editMode: user.uid})}>
+                                                                <Edit/>
+                                                            </IconButton>}
+                                                    </Fragment>}
+                                                </ActiveUser.Consumer>
+                                            </CardContent>
+                                        </Card>
+                                    </Grid>
+                                )
+                            })}
                     </Grid>
                 </div>
         );
