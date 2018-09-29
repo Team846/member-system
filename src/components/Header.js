@@ -66,7 +66,9 @@ class Header extends Component {
                                 );
                             })}
                     </ActiveUser.Consumer>
-                    <ListItem button onClick={() => firebase.auth().signOut()}>
+                    <ListItem button onClick={() => {
+                        firebase.auth().signOut().then(() => window.location.reload());
+                    }}>
                         <ListItemText>Sign Out</ListItemText>
                     </ListItem>
                 </List>
