@@ -15,5 +15,5 @@ export function getFilteredUsers() {
         } else {
             return (user[this.state.filterBy] || this.state.filterText).toLowerCase().includes(this.state.filterText.toLowerCase());
         }
-    }).slice(0, 25);
+    });
 }

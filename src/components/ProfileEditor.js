@@ -97,8 +97,10 @@ class ProfileEditor extends Component {
                         } else return null;
                     }}
                 </ActiveUser.Consumer>
-                {ProfileEditor.wrapWithGrid(<Button disabled={this.state.buttonDisabled} fullWidth
-                                                    onClick={this.updateRemoteProfile}>{this.state.buttonText}</Button>)}
+                {ProfileEditor.wrapWithGrid(<Button disabled={this.state.buttonDisabled}
+                                                    fullWidth
+                                                    onClick={this.updateRemoteProfile}
+                                                    variant={"raised"}>{this.state.buttonText}</Button>)}
             </Grid>
         );
     }

@@ -66,9 +66,13 @@ App.propTypes = {
 App.styles = theme => ({
     content: {
         marginTop: 56,
+        maxHeight: `calc(100vh - 56px)`,
         [theme.breakpoints.up('md')]: {
             marginLeft: drawerWidth,
-            marginTop: 64
+            marginTop: 64,
+            maxHeight: `calc(100vh - 64px)`,
+            maxWidth: `calc(100vw - ${drawerWidth}px)`,
+            overflowX: 'scroll'
         }
     }
 });

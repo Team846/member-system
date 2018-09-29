@@ -6,13 +6,6 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary/Expan
 import Typography from "@material-ui/core/Typography/Typography";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails/ExpansionPanelDetails";
 import TextField from "@material-ui/core/TextField/TextField";
-import FormControl from "@material-ui/core/FormControl/FormControl";
-import InputLabel from "@material-ui/core/InputLabel/InputLabel";
-import Select from "@material-ui/core/Select/Select";
-import MenuItem from "@material-ui/core/MenuItem/MenuItem";
-import settings from "../settings";
-import {toTitleCase} from "../helpers";
-import Grid from "@material-ui/core/Grid/Grid";
 
 class Aliases extends Component {
     componentDidMount() {
@@ -34,27 +27,11 @@ class Aliases extends Component {
         }
     }
 
-    addFilterToAlias = aliasId => {
+    onNewForwardsForAlias = alias => e => {
         const aliases = this.state.aliases.slice(0);
-        const alias = aliases.find(alias => alias.id === aliasId);
-        alias.filters.push({by: "role", value: "", id: Date.now()});
-        alias.edited = true;
-        this.setState({aliases});
-    };
-
-    editFilterFieldForAlias = (aliasId, filterId, filterField) => e => {
-        const aliases = this.state.aliases.slice(0);
-        const alias = aliases.find(alias => alias.id === aliasId);
-        alias.edited = true;
-        alias.filters.find(filter => filter.id === filterId)[filterField] = e.target.value;
-        this.setState({aliases});
-    };
-
-    updateAliasState = aliasId => field => e => {
-        const aliases = this.state.aliases.slice(0);
-        aliases[aliases.findIndex(alias => alias.id === aliasId)] = {
-            ...aliases.find(alias => alias.id === aliasId), [field]: e.target.value, edited: true
-        };
+        const localAlias = aliases.find(it => it.id === alias.id);
+        localAlias.forwards = e.target.value;
+        localAlias.edited = true;
         this.setState({aliases});
     };
 
@@ -81,36 +58,10 @@ class Aliases extends Component {
                                 onChange={this.updateAliasState(alias.id)("alias")}
                                 label={"Alias"}
                                 value={alias.alias}/>
-                            {alias.filters.map(filter =>
-                                <div key={filter.id} style={{padding: 16}}>
-                                    <Grid container spacing={16}>
-                                        <Grid item xs={6}>
-                                            <FormControl fullWidth margin={"dense"}>
-                                                <InputLabel htmlFor={`${alias.id}-${filter.by}-${filter.value}`}>Filter
-                                                    By</InputLabel>
-                                                <Select inputProps={{id: `${alias.id}-${filter.by}-${filter.value}`}}
-                                                        onChange={this.editFilterFieldForAlias(alias.id, filter.id, "by")}
-                                                        value={filter.by}>
-                                                    {settings.fields
-                                                        .map(field => field.label)
-                                                        .concat(["Permission Level", "UID"])
-                                                        .map(label => <MenuItem
-                                                            key={toTitleCase(label)}
-                                                            value={toTitleCase(label)}>{label}</MenuItem>)}
-                                                </Select>
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <TextField
-                                                fullWidth
-                                                margin={"dense"}
-                                                label={"Filter Text"}
-                                                onChange={this.editFilterFieldForAlias(alias.id, filter.id, "value")}
-                                                value={filter.value}/>
-                                        </Grid>
-                                    </Grid>
-                                </div>)}
-                            <Button fullWidth onClick={() => this.addFilterToAlias(alias.id)}>New Filter</Button>
+                            <textarea
+                                style={{fontFamily: 'Roboto, sans-serif'}}
+                                onChange={this.onNewForwardsForAlias(alias)}
+                                value={alias.forwards}/>
                             <Typography>"{alias.name}" &lt;{alias.alias}@lynbrookrobotics.com&gt;</Typography>
                         </ExpansionPanelDetails>
                     </ExpansionPanel>
@@ -141,6 +92,14 @@ class Aliases extends Component {
             </div>
         );
     }
+
+    updateAliasState = aliasId => field => e => {
+        const aliases = this.state.aliases.slice(0);
+        aliases[aliases.findIndex(alias => alias.id === aliasId)] = {
+            ...aliases.find(alias => alias.id === aliasId), [field]: e.target.value, edited: true
+        };
+        this.setState({aliases});
+    };
 }
 
 export default Aliases;

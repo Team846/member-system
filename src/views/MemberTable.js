@@ -6,12 +6,10 @@ import settings from "../settings";
 import TableRow from "@material-ui/core/TableRow/TableRow";
 import TableCell from "@material-ui/core/TableCell/TableCell";
 import TableSortLabel from "@material-ui/core/TableSortLabel/TableSortLabel";
-import {toTitleCase} from "../helpers";
+import {getFilteredUsers, toTitleCase} from "../helpers";
 import withStyles from "@material-ui/core/styles/withStyles";
 import TableBody from "@material-ui/core/TableBody/TableBody";
-import {drawerWidth} from "../components/Header";
 import firebase from "firebase/app";
-import {getFilteredUsers} from '../helpers';
 import MenuItem from "@material-ui/core/MenuItem/MenuItem";
 import FilterTools from "../components/FilterTools";
 
@@ -66,7 +64,7 @@ class MemberTable extends Component {
                                      {settings.fields.find(field => toTitleCase(field.label) === liteField).label}
                                  </MenuItem>}/>
                 </div>
-                <div className={classes.table}>
+                <div>
                     <Table>
                         <TableHead className={classes.tHead}>
                             <TableRow>
@@ -119,13 +117,6 @@ MemberTable.propTypes = {
 };
 
 MemberTable.styles = theme => ({
-    table: {
-        overflowX: 'scroll',
-        width: '100vw',
-        [theme.breakpoints.up('md')]: {
-            width: `calc(100vw - ${drawerWidth}px)`
-        }
-    },
     tHead: {
         '& *': {
             whiteSpace: 'nowrap'
