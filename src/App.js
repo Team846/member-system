@@ -22,7 +22,7 @@ class App extends Component {
                 this.unsubscribe();
             }
         });
-        settings.tabs[0].get().then(tab => {
+        settings.tabs.find(it => it.minPermissionLevel === "Prospective").get().then(tab => {
             this.setState({content: tab});
         });
     }
