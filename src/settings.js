@@ -157,7 +157,7 @@ const settings = {
                 return <ProfileEditor/>;
             },
             label: "Profile Editor",
-            minPermissionLevel: "Standard"
+            minPermissionLevel: "Prospective"
         },
         {
             async get() {
