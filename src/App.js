@@ -1,83 +1,83 @@
-import ActiveUser from './contexts/ActiveUser';
-import CssBaseline from "@material-ui/core/CssBaseline/CssBaseline";
-import Header, {drawerWidth} from './components/Header';
-import PropTypes from 'prop-types';
-import React, {Component} from 'react';
-import withStyles from "@material-ui/core/styles/withStyles";
-import Typography from "@material-ui/core/Typography/Typography";
+import * as PropTypes from "prop-types";
+import {asyncComponent} from "react-async-component";
+import {createMuiTheme, CssBaseline, MuiThemeProvider} from "@material-ui/core";
 import firebase from "firebase/app";
-import Login from "./views/Login";
-import settings from "./settings";
+import React, {Component} from 'react';
+import {Redirect, Route, Switch, withRouter} from "react-router-dom";
+import {routes} from "./settings";
+import {SnackbarProvider} from "notistack";
+import "firebase/auth";
+
+function PrivateRoute({component: Component, ...props}) {
+    return (
+        <Route
+            render={props =>
+                firebase.auth().currentUser !== null
+                    ? <Component {...props}/>
+                    : <Redirect to={{
+                        pathname: routes.public.LOGIN.path,
+                        state: {
+                            from: props.location
+                        }
+                    }}/>
+            }
+            {...props}/>
+    )
+}
 
 class App extends Component {
     componentDidMount() {
         firebase.auth().onAuthStateChanged(user => {
-            this.setState({authenticated: user !== null});
-            if (user) {
-                this.unsubscribe = firebase.firestore().doc(`users/${user.uid}`)
-                    .onSnapshot(snapshot => {
-                        this.setState({user: Object.assign(this.state.user, snapshot.data())});
-                    });
-            } else {
-                this.unsubscribe();
-            }
-        });
-        settings.tabs.find(it => it.minPermissionLevel === "Prospective").get().then(tab => {
-            this.setState({content: tab});
+            this.setState({
+                authEvaluation: user
+            })
         });
     }
 
-    componentWillUnmount() {
-        this.unsubscribe();
-    }
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            authenticated: false,
-            content: <Typography>Loading your profile...</Typography>,
-            user: settings.defaultProfile
-        };
-    }
+    static propTypes = {
+        history: PropTypes.object.isRequired,
+        location: PropTypes.object.isRequired,
+    };
 
     render() {
-        const
-            {authenticated} = this.state,
-            {classes} = this.props;
+        return this.state.authEvaluation !== undefined ? (
+            <SnackbarProvider maxStack={3}>
+                <CssBaseline/>
+                <MuiThemeProvider theme={App.theme}>
+                    <Switch>
+                        {Object.values(routes.public)
+                            .map(App.routeFromDescriptor(Route))}
+                        {Object.values(routes.private)
+                            .map(App.routeFromDescriptor(PrivateRoute))}
+                        <Route render={props => <Redirect to={{pathname: "/login"}} {...props}/>}/>
+                    </Switch>
+                </MuiThemeProvider>
+            </SnackbarProvider>) : null;
+    }
+
+    static routeFromDescriptor = RouteComponent => descriptor => {
+        const {resolve, ...others} = descriptor;
 
         return (
-            <React.Fragment>
-                <ActiveUser.Provider value={this.state.user}>
-                    <CssBaseline/>
-                    <Header authenticated={authenticated} onNewContent={this.updateContent}/>
-                    {authenticated && <div className={classes.content}>{this.state.content}</div>}
-                    {!authenticated && <Login/>}
-                </ActiveUser.Provider>
-            </React.Fragment>
+            <RouteComponent
+                component={asyncComponent({
+                    resolve
+                })}
+                key={descriptor.path}
+                {...others}
+            />
         );
-    }
+    };
 
-    updateContent = content => {
-        this.setState({content});
-    }
+    state = {
+        authEvaluation: undefined
+    };
+
+    static theme = createMuiTheme({
+        typography: {
+            useNextVariants: true
+        }
+    });
 }
 
-App.propTypes = {
-    classes: PropTypes.object.isRequired
-};
-
-App.styles = theme => ({
-    content: {
-        marginTop: 56,
-        maxHeight: `calc(100vh - 56px)`,
-        [theme.breakpoints.up('md')]: {
-            marginLeft: drawerWidth,
-            marginTop: 64,
-            maxHeight: `calc(100vh - 64px)`,
-            maxWidth: `calc(100vw - ${drawerWidth}px)`,
-            overflowX: 'scroll'
-        }
-    }
-});
-
-export default withStyles(App.styles)(App);
+export default withRouter(App);
