@@ -46,7 +46,7 @@ export const routes = {
 const completeUserProfileField = (prefix = "") => userProfileField => {
     let fullField;
 
-    if (userProfileField.type === "multi-input-field") {
+    if (userProfileField.type === "multi-input-field" || userProfileField.type === "group") {
         fullField = {
             ...userProfileField,
             content: userProfileField.content.map(completeUserProfileField(`${prefix + userProfileField.label} `))
@@ -58,6 +58,7 @@ const completeUserProfileField = (prefix = "") => userProfileField => {
     }
 
     return {
+        condition: () => true,
         ...fullField,
         key: prefix + fullField.label
     };
@@ -71,11 +72,17 @@ PhoneNumberInput.props = {
     startAdornment: <InputAdornment position={"start"}>+1</InputAdornment>
 };
 
+const isStudent = profile => profile.Role === "Student";
+
 // noinspection JSUnusedGlobalSymbols
 export const userProfileFields = [{
     label: "Name"
 }, {
     label: "Email"
+}, {
+    label: "Gender",
+    options: ["Male", "Female", "Other"],
+    type: "select"
 }, {
     content: [{
         InputProps: PhoneNumberInput.props,
@@ -87,4 +94,64 @@ export const userProfileFields = [{
     }],
     label: "Primary Phone",
     type: "multi-input-field"
+}, {
+    content: [{
+        InputProps: PhoneNumberInput.props,
+        label: "Number"
+    }, {
+        label: "Type",
+        options: ["Cell", "Home"],
+        type: "select"
+    }],
+    label: "Backup Phone",
+    type: "multi-input-field"
+}, {
+    content: [{
+        label: "Line 1"
+    }, {
+        label: "Line 2"
+    }, {
+        label: "Zip Code"
+    }],
+    label: "Home Address",
+    type: "multi-input-field"
+}, {
+    label: "Teams",
+    multiple: true,
+    options: ["Animation", "Design", "Electrical", "Hardware", "Software"],
+    type: "select"
+}, {
+    label: "Role",
+    options: ["Mentor", "Student", "Other"],
+    type: "select"
+}, {
+    condition: isStudent,
+    label: "Student ID"
+}, {
+    condition: isStudent,
+    label: "Graduation Year"
+}, {
+    condition: isStudent,
+    content: [{
+        content: [{
+            label: "Name"
+        }, {
+            label: "Email"
+        }, {
+            label: "Employer"
+        }],
+        label: "Parent 1",
+        type: "group"
+    }, {
+        content: [{
+            label: "Name"
+        }, {
+            label: "Email"
+        }, {
+            label: "Employer"
+        }],
+        label: "Parent 2",
+        type: "group"
+    }],
+    type: "group"
 }].map(completeUserProfileField());
