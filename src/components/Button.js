@@ -6,11 +6,11 @@ function Button(props) {
     return (
         <MuiButton
             fullWidth
-            className={props.classes.button}
+            className={props.classes.root}
             color="primary"
             variant="contained"
             {...props}/>
-    )
+    );
 }
 
 Button.propTypes = {
@@ -18,7 +18,7 @@ Button.propTypes = {
 };
 
 Button.styles = theme => ({
-    button: {
+    root: {
         marginTop: theme.spacing.unit * 2
     }
 });

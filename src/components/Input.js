@@ -1,4 +1,4 @@
-import {FormControl, InputLabel, OutlinedInput, Select, TextField} from "@material-ui/core";
+import {FormControl, InputLabel, MenuItem, OutlinedInput, Select, TextField} from "@material-ui/core";
 import React, {Component} from "react";
 import ReactDOM from "react-dom";
 
@@ -14,7 +14,7 @@ class Input extends Component {
     }
 
     render() {
-        const {label, type, ...other} = this.props;
+        const {label, options, type, ...other} = this.props;
 
         if (type === "select") {
             return (
@@ -32,7 +32,9 @@ class Input extends Component {
                             <OutlinedInput labelWidth={this.state.labelWidth}/>
                         }
                         variant="outlined"
-                        {...other}/>
+                        {...other}>
+                        {options.map(option => <MenuItem key={option} value={option}>{option}</MenuItem>)}
+                    </Select>
                 </FormControl>
             )
         } else {
