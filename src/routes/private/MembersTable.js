@@ -1,23 +1,18 @@
 import firebase from "firebase/app";
 import React, {Component, Fragment} from "react";
-import {Table, TableBody, TableHead, TableRow, TableCell, withStyles} from "@material-ui/core";
+import {Table, TableBody, TableCell, TableHead, TableRow, withStyles} from "@material-ui/core";
 import {userProfileFields} from "../../settings";
 import Dashboard from "../../components/Dashboard";
+import classNames from "classnames";
 
 class MembersTable extends Component {
     componentDidMount() {
         firebase.firestore().collection('users').get().then(snapshot => {
-            let users = snapshot.docs.map(doc => ({
-                ...doc.data(),
-                uid: doc.id
-            }));
-
-            for (let i = 0; i < 5; i++) {
-                users = users.concat(users);
-            }
-
             this.setState({
-                users
+                users: snapshot.docs.map(doc => ({
+                    ...doc.data(),
+                    uid: doc.id
+                }))
             });
         });
     }
@@ -33,7 +28,11 @@ class MembersTable extends Component {
             )
         } else {
             return <TableCell
-                className={key === "Name" ? this.props.classes.stickyColumn : "" + this.props.classes.stickyHeader}
+                className={classNames({
+                    [this.props.classes.stickyColumn]: key === "Name",
+                    [this.props.classes.stickyHeader]: true,
+                    [this.props.classes.stickyColumnHeader]: key === "Name"
+                })}
                 key={field.key}>{field.key}</TableCell>
         }
     };
@@ -89,11 +88,15 @@ class MembersTable extends Component {
             willChange: "transform",
             zIndex: 1
         },
+        stickyColumnHeader: {
+            zIndex: "3 !important"
+        },
         stickyHeader: {
             backgroundColor: theme.palette.background.default,
             top: 64,
             position: "sticky",
-            willChange: "transform"
+            willChange: "transform",
+            zIndex: 2
         }
     });
 }
