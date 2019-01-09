@@ -18,6 +18,11 @@ const getDefaultExport = module => module.default;
 
 export const routes = {
     private: {
+        MEMBERS_TABLE: {
+            label: "Members",
+            path: "/members",
+            resolve: () => import(/* webpackChunkName: "Members" */ "./routes/private/MembersTable").then(getDefaultExport)
+        },
         PROFILE_EDITOR: {
             label: "Profile Editor",
             path: "/",
@@ -133,25 +138,23 @@ export const userProfileFields = [{
 }, {
     condition: isStudent,
     content: [{
-        content: [{
-            label: "Name"
-        }, {
-            label: "Email"
-        }, {
-            label: "Employer"
-        }],
-        label: "Parent 1",
-        type: "group"
+        label: "Name"
     }, {
-        content: [{
-            label: "Name"
-        }, {
-            label: "Email"
-        }, {
-            label: "Employer"
-        }],
-        label: "Parent 2",
-        type: "group"
+        label: "Email"
+    }, {
+        label: "Employer"
     }],
+    label: "Parent 1",
+    type: "group"
+}, {
+    condition: isStudent,
+    content: [{
+        label: "Name"
+    }, {
+        label: "Email"
+    }, {
+        label: "Employer"
+    }],
+    label: "Parent 2",
     type: "group"
 }].map(completeUserProfileField());
