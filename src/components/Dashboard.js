@@ -3,6 +3,8 @@ import { AppBar, Toolbar, Typography, Drawer, IconButton, List, ListItem, ListIt
 import React, { Component, Fragment } from 'react';
 import { Menu } from "@material-ui/icons";
 import { withStyles } from '@material-ui/core/styles';
+import {routes} from "../settings";
+import {withRouter} from "react-router-dom";
 
 class Dashboard extends Component {
     closeDrawer = () => {
@@ -42,6 +44,10 @@ class Dashboard extends Component {
                                 <Typography variant="h5">Member System</Typography>
                             </ListItemText>
                         </ListItem>
+                        {Object.values(routes.private).map(route =>
+                            <ListItem button key={route.path} onClick={() => this.props.history.push(route.path)}>
+                                <ListItemText>{route.label}</ListItemText>
+                            </ListItem>)}
                     </List>
                 </Drawer>
                 <div className={classes.contentSpacer}/>
@@ -72,4 +78,4 @@ class Dashboard extends Component {
     });
 }
 
-export default withStyles(Dashboard.styles)(Dashboard);
+export default withStyles(Dashboard.styles)(withRouter(Dashboard));

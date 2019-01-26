@@ -4,6 +4,7 @@ import {Table, TableBody, TableCell, TableHead, TableRow, withStyles} from "@mat
 import {userProfileFields} from "../../settings";
 import Dashboard from "../../components/Dashboard";
 import classNames from "classnames";
+import * as PropTypes from "prop-types";
 
 class MembersTable extends Component {
     componentDidMount() {
@@ -57,6 +58,10 @@ class MembersTable extends Component {
         return <TableRow key={user.uid}>
             {userProfileFields.map(this.generateCellFromUserAndField(user))}
         </TableRow>
+    };
+
+    static propTypes = {
+        classes: PropTypes.object.isRequired
     };
 
     render() {

@@ -18,6 +18,11 @@ const getDefaultExport = module => module.default;
 
 export const routes = {
     private: {
+        MAILING_LISTS: {
+            label: "Mailing Lists",
+            path: "/mailing-lists",
+            resolve: () => import(/* webpackChunkName: "MailingLists" */ "./routes/private/MailingLists").then(getDefaultExport)
+        },
         MEMBERS_TABLE: {
             label: "Members",
             path: "/members",

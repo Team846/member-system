@@ -11,11 +11,17 @@ import * as PropTypes from "prop-types";
 
 class ProfileEditor extends Component {
     componentDidMount() {
-        firebase.firestore().doc(`users/${firebase.auth().currentUser.uid}`).onSnapshot(snapshot => {
-            this.setState({
-                profile: snapshot.data() || this.state.profile
-            });
-        });
+        this.unsubscribe =
+            firebase.firestore().doc(`users/${firebase.auth().currentUser.uid}`)
+                .onSnapshot(snapshot => {
+                    this.setState({
+                        profile: snapshot.data() || this.state.profile
+                    });
+                });
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
     }
 
     generateInputFromUserProfileField = userProfileField => {
@@ -93,16 +99,18 @@ class ProfileEditor extends Component {
 
     state = (() => {
         const {currentUser} = firebase.auth();
-        return {profile: {
-            "Backup Phone Type": "Home",
-            Email: currentUser.email,
-            Gender: "Male",
-            Name: currentUser.displayName,
-            "Primary Phone Number": "(408) 480-2845",
-            "Primary Phone Type": "Cell",
-            Role: "Student",
-            Teams: [],
-        }};
+        return {
+            profile: {
+                "Backup Phone Type": "Home",
+                Email: currentUser.email,
+                Gender: "Male",
+                Name: currentUser.displayName,
+                "Primary Phone Number": "(408) 480-2845",
+                "Primary Phone Type": "Cell",
+                Role: "Student",
+                Teams: [],
+            }
+        };
     })();
 
     static styles = theme => ({

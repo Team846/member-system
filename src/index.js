@@ -15,10 +15,6 @@ firebase.initializeApp({
     messagingSenderId: "299255312336"
 });
 
-firebase.firestore().settings({
-    timestampsInSnapshots: true // TODO: Remove once this is the default behavior
-});
-
 const app = (
     <BrowserRouter>
         <App/>

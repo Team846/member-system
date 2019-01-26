@@ -1,14 +1,15 @@
 import * as PropTypes from "prop-types";
-import { asyncComponent } from "react-async-component";
-import { createMuiTheme, CssBaseline, MuiThemeProvider } from "@material-ui/core";
+import {asyncComponent} from "react-async-component";
+import {createMuiTheme, CssBaseline, MuiThemeProvider} from "@material-ui/core";
+import {deepOrange as primary} from "@material-ui/core/colors";
 import firebase from "firebase/app";
-import React, { Component, Fragment } from 'react';
-import { Redirect, Route, Switch, withRouter } from "react-router-dom";
-import { routes } from "./settings";
-import { SnackbarProvider } from "notistack";
+import React, {Component, Fragment} from 'react';
+import {Redirect, Route, Switch, withRouter} from "react-router-dom";
+import {routes} from "./settings";
+import {SnackbarProvider} from "notistack";
 import "firebase/auth";
 
-function PrivateRoute({ component: Component, ...props }) {
+function PrivateRoute({component: Component, ...props}) {
     return (
         <Route
             render={props =>
@@ -19,7 +20,7 @@ function PrivateRoute({ component: Component, ...props }) {
                         state: {
                             from: props.location
                         }
-                    }} />
+                    }}/>
             }
             {...props} />
     )
@@ -43,14 +44,14 @@ class App extends Component {
         return this.state.authEvaluation !== undefined ? (
             <SnackbarProvider maxStack={3}>
                 <Fragment>
-                    <CssBaseline />
+                    <CssBaseline/>
                     <MuiThemeProvider theme={App.theme}>
                         <Switch>
                             {Object.values(routes.public)
                                 .map(App.routeFromDescriptor(Route))}
                             {Object.values(routes.private)
                                 .map(App.routeFromDescriptor(PrivateRoute))}
-                            <Route render={props => <Redirect to={{ pathname: "/login" }} {...props} />} />
+                            <Route render={props => <Redirect to={{pathname: "/login"}} {...props} />}/>
                         </Switch>
                     </MuiThemeProvider>
                 </Fragment>
@@ -58,7 +59,7 @@ class App extends Component {
     }
 
     static routeFromDescriptor = RouteComponent => descriptor => {
-        const { resolve, ...others } = descriptor;
+        const {resolve, ...others} = descriptor;
 
         return (
             <RouteComponent
@@ -76,6 +77,9 @@ class App extends Component {
     };
 
     static theme = createMuiTheme({
+        palette: {
+            primary
+        },
         typography: {
             useNextVariants: true
         }

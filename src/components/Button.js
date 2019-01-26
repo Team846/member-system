@@ -1,26 +1,28 @@
 import * as PropTypes from "prop-types";
-import {Button as MuiButton, withStyles} from "@material-ui/core";
+import {Button as MuiButton} from "@material-ui/core";
 import React from "react";
 
 function Button(props) {
+    const {noMarginTop, ...other} = props;
+
     return (
         <MuiButton
             fullWidth
-            className={props.classes.root}
             color="primary"
+            style={{
+                marginTop: noMarginTop ? 8 : 24
+            }}
             variant="contained"
-            {...props}/>
+            {...other}/>
     );
 }
 
-Button.propTypes = {
-    classes: PropTypes.object.isRequired
+Button.defaultProps = {
+    noMarginTop: false
 };
 
-Button.styles = theme => ({
-    root: {
-        marginTop: theme.spacing.unit * 2
-    }
-});
+Button.propTypes = {
+    noMarginTop: PropTypes.bool
+};
 
-export default withStyles(Button.styles)(Button);
+export default Button;
