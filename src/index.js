@@ -1,5 +1,5 @@
 import App from './App';
-import {BrowserRouter} from "react-router-dom";
+import {HashRouter} from "react-router-dom";
 import firebase from "firebase/app";
 import ReactDOM from 'react-dom';
 import React from 'react';
@@ -16,9 +16,9 @@ firebase.initializeApp({
 });
 
 const app = (
-    <BrowserRouter>
+    <HashRouter>
         <App/>
-    </BrowserRouter>
+    </HashRouter>
 );
 
 ReactDOM.render(app, document.getElementById('root'));
