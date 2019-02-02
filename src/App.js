@@ -28,11 +28,15 @@ function PrivateRoute({component: Component, ...props}) {
 
 class App extends Component {
     componentDidMount() {
-        firebase.auth().onAuthStateChanged(user => {
+        this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
             this.setState({
                 authEvaluation: user
             })
         });
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
     }
 
     static propTypes = {
