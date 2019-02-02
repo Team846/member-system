@@ -1,3 +1,5 @@
+# Member System [![Build Status](https://travis-ci.com/Team846/member-system.svg?token=Z1FsSPyPy8LSd7ix41p9&branch=master)](https://travis-ci.com/Team846/member-system)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
