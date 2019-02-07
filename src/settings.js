@@ -2,6 +2,12 @@ import {InputAdornment} from "@material-ui/core";
 import InputMask from "react-input-mask";
 import React from "react";
 
+export const permissionLevels = ["Standard", "Prospective", "Parent", "Member", "Mentor", "Officer", "Administrator"];
+
+export const ActiveUser = React.createContext({
+    permissionLevel: permissionLevels[0]
+});
+
 /* TODO: Support for nesting, notated by periods */
 export const model = context => (field, onChange = "onChange", value = "value", getNewValue = e => e.target.value) => {
     return {
@@ -19,6 +25,7 @@ const getDefaultExport = module => module.default;
 export const routes = {
     private: {
         MAILING_LISTS: {
+            minPermissionLevel: "Mentor",
             label: "Mailing Lists",
             path: "/mailing-lists",
             resolve: () => import(/* webpackChunkName: "MailingLists" */ "./routes/private/MailingLists").then(getDefaultExport)

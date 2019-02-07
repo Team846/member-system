@@ -1,8 +1,9 @@
 import * as PropTypes from 'prop-types';
-import { AppBar, Toolbar, Typography, Drawer, IconButton, List, ListItem, ListItemText } from '@material-ui/core';
-import React, { Component, Fragment } from 'react';
-import { Menu } from "@material-ui/icons";
-import { withStyles } from '@material-ui/core/styles';
+import {ActiveUser, permissionLevels} from "../settings";
+import {AppBar, Toolbar, Typography, Drawer, IconButton, List, ListItem, ListItemText} from '@material-ui/core';
+import React, {Component, Fragment} from 'react';
+import {Menu} from "@material-ui/icons";
+import {withStyles} from '@material-ui/core/styles';
 import {routes} from "../settings";
 import {withRouter} from "react-router-dom";
 
@@ -26,33 +27,40 @@ class Dashboard extends Component {
     };
 
     render() {
-        const { children, classes, title } = this.props;
+        const {children, classes, title} = this.props;
         return (
-            <Fragment>
-                <AppBar>
-                    <Toolbar className={classes.toolbar}>
-                        <IconButton className={classes.menuButton} color="inherit" onClick={this.openDrawer}>
-                            <Menu />
-                        </IconButton>
-                        <Typography color="inherit" component="h1" variant="h5">{title}</Typography>
-                    </Toolbar>
-                </AppBar>
-                <Drawer classes={{paper: classes.drawerPaper}} onClose={this.closeDrawer} open={this.state.open} variant="temporary">
-                    <List>
-                        <ListItem>
-                            <ListItemText>
-                                <Typography variant="h5">Member System</Typography>
-                            </ListItemText>
-                        </ListItem>
-                        {Object.values(routes.private).map(route =>
-                            <ListItem button key={route.path} onClick={() => this.props.history.push(route.path)}>
-                                <ListItemText>{route.label}</ListItemText>
-                            </ListItem>)}
-                    </List>
-                </Drawer>
-                <div className={classes.contentSpacer}/>
-                {children}
-            </Fragment>
+            <ActiveUser.Consumer>{
+                activeUser => (
+                    <Fragment>
+                        <AppBar>
+                            <Toolbar className={classes.toolbar}>
+                                <IconButton className={classes.menuButton} color="inherit" onClick={this.openDrawer}>
+                                    <Menu/>
+                                </IconButton>
+                                <Typography color="inherit" component="h1" variant="h5">{title}</Typography>
+                            </Toolbar>
+                        </AppBar>
+                        <Drawer classes={{paper: classes.drawerPaper}} onClose={this.closeDrawer} open={this.state.open}
+                                variant="temporary">
+                            <List>
+                                <ListItem>
+                                    <ListItemText>
+                                        <Typography variant="h5">Member System</Typography>
+                                    </ListItemText>
+                                </ListItem>
+                                {Object.values(routes.private).map(route => permissionLevels.indexOf(activeUser["Permission Level"]) > route.minPermissionLevel || "Standard"
+                                    ? <ListItem button key={route.path}
+                                                onClick={() => this.props.history.push(route.path)}>
+                                        <ListItemText>{route.label}</ListItemText>
+                                    </ListItem>
+                                    : null)}
+                            </List>
+                        </Drawer>
+                        <div className={classes.contentSpacer}/>
+                        {children}
+                    </Fragment>
+                )
+            }</ActiveUser.Consumer>
         );
     }
 

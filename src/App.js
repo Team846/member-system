@@ -1,11 +1,11 @@
 import * as PropTypes from "prop-types";
 import {asyncComponent} from "react-async-component";
-import {createMuiTheme, CssBaseline, MuiThemeProvider} from "@material-ui/core";
+import {CircularProgress, createMuiTheme, CssBaseline, MuiThemeProvider} from "@material-ui/core";
 import {deepOrange as primary} from "@material-ui/core/colors";
 import firebase from "firebase/app";
-import React, {Component, Fragment} from 'react';
+import React, {Component} from 'react';
 import {Redirect, Route, Switch, withRouter} from "react-router-dom";
-import {routes} from "./settings";
+import {ActiveUser, permissionLevels, routes} from "./settings";
 import {SnackbarProvider} from "notistack";
 import "firebase/auth";
 
@@ -29,9 +29,12 @@ function PrivateRoute({component: Component, ...props}) {
 class App extends Component {
     componentDidMount() {
         this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
-            this.setState({
-                authEvaluation: user
-            })
+            firebase.firestore().doc(`users/${user.uid}`).get().then(snapshot => {
+                this.setState({
+                    activeUserProfile: snapshot.data(),
+                    authEvaluation: user
+                });
+            });
         });
     }
 
@@ -45,9 +48,9 @@ class App extends Component {
     };
 
     render() {
-        return this.state.authEvaluation !== undefined ? (
-            <SnackbarProvider maxStack={3}>
-                <Fragment>
+        return this.state.authEvaluation !== undefined
+            ? <SnackbarProvider maxStack={3}>
+                <ActiveUser.Provider value={this.state.activeUserProfile}>
                     <CssBaseline/>
                     <MuiThemeProvider theme={App.theme}>
                         <Switch>
@@ -58,8 +61,14 @@ class App extends Component {
                             <Route render={props => <Redirect to={{pathname: "/login"}} {...props} />}/>
                         </Switch>
                     </MuiThemeProvider>
-                </Fragment>
-            </SnackbarProvider>) : null;
+                </ActiveUser.Provider>
+            </SnackbarProvider>
+            : <div style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                minHeight: "100vh"
+            }}><CircularProgress/></div>;
     }
 
     static routeFromDescriptor = RouteComponent => descriptor => {
@@ -77,6 +86,9 @@ class App extends Component {
     };
 
     state = {
+        activeUserProfile: {
+            permissionLevel: permissionLevels[0]
+        },
         authEvaluation: undefined
     };
 

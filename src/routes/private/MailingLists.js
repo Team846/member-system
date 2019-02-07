@@ -1,10 +1,11 @@
 import {
+    Checkbox,
     Divider,
     ExpansionPanel,
     ExpansionPanelActions,
     ExpansionPanelDetails,
     ExpansionPanelSummary,
-    Fab,
+    Fab, FormControlLabel,
     Grid,
     InputAdornment,
     Modal,
@@ -55,13 +56,13 @@ class MailingLists extends Component {
         enqueueSnackbar: PropTypes.func.isRequired
     };
 
-    modelModalData = name => e => {
+    modelModalData = (name, isCheckbox = false) => e => {
         this.setState({
             modal: {
                 ...this.state.modal,
                 data: {
                     ...this.state.modal.data,
-                    [name]: e.target.value
+                    [name]: isCheckbox ? e.target.checked : e.target.value
                 }
             }
         })
@@ -82,7 +83,7 @@ class MailingLists extends Component {
             <Dashboard title={"Mailing Lists"}>
                 <Grid container justify={"center"}>
                     {this.state.aliases.map(alias =>
-                        <Grid item key={alias.id} xs={12} md={6}>
+                        <Grid item key={alias.id} xs={12} md={7}>
                             <ExpansionPanel>
                                 <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
                                     <Typography>{alias.name}</Typography>
@@ -105,6 +106,9 @@ class MailingLists extends Component {
                                 </ExpansionPanelDetails>
                                 <Divider/>
                                 <ExpansionPanelActions>
+                                    <FormControlLabel
+                                        control={<Checkbox onChange={this.updateAliasField(alias, "private", true)}
+                                                           checked={alias.private}/>} label={"Private"} margin={"none"}/>
                                     <Button
                                         fullWidth={false}
                                         noMarginTop
@@ -169,7 +173,8 @@ class MailingLists extends Component {
             data: {
                 alias: Date.now(),
                 name: "New Alias",
-                members: ""
+                members: "",
+                private: false
             },
             open: false
         }
@@ -186,9 +191,9 @@ class MailingLists extends Component {
         }
     });
 
-    updateAliasField = (alias, field) => e => {
+    updateAliasField = (alias, field, isCheckbox = false) => e => {
         const aliases = [].concat(this.state.aliases);
-        aliases.find(it => it.id === alias.id)[field] = e.target.value;
+        aliases.find(it => it.id === alias.id)[field] = isCheckbox ? e.target.checked : e.target.value;
         this.setState({
             aliases
         });

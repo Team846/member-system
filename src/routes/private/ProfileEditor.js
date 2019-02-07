@@ -4,7 +4,7 @@ import firebase from "firebase/app";
 import {Grid, Paper, withStyles} from "@material-ui/core";
 import Input from "../../components/Input";
 import React, {Component} from "react";
-import {userProfileFields} from "../../settings";
+import {permissionLevels, userProfileFields} from "../../settings";
 import Typography from "@material-ui/core/es/Typography/Typography";
 import {withSnackbar} from "notistack";
 import * as PropTypes from "prop-types";
@@ -105,6 +105,7 @@ class ProfileEditor extends Component {
                 Email: currentUser.email,
                 Gender: "Male",
                 Name: currentUser.displayName,
+                "Permission Level": permissionLevels[0],
                 "Primary Phone Number": "(408) 480-2845",
                 "Primary Phone Type": "Cell",
                 Role: "Student",
