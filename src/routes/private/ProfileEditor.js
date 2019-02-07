@@ -11,8 +11,9 @@ import * as PropTypes from "prop-types";
 
 class ProfileEditor extends Component {
     componentDidMount() {
+        this.uid = this.props.match.params.uid || firebase.auth().currentUser.uid;
         this.unsubscribe =
-            firebase.firestore().doc(`users/${firebase.auth().currentUser.uid}`)
+            firebase.firestore().doc(`users/${this.uid}`)
                 .onSnapshot(snapshot => {
                     this.setState({
                         profile: snapshot.data() || this.state.profile
@@ -123,7 +124,7 @@ class ProfileEditor extends Component {
     updateProfile = e => {
         const {enqueueSnackbar} = this.props;
         e.preventDefault();
-        firebase.firestore().doc(`users/${firebase.auth().currentUser.uid}`)
+        firebase.firestore().doc(`users/${this.uid}`)
             .set(this.state.profile)
             .then(() => enqueueSnackbar("Updated profile"))
             .catch(e => enqueueSnackbar(e.message, {

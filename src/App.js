@@ -29,11 +29,15 @@ function PrivateRoute({component: Component, ...props}) {
 class App extends Component {
     componentDidMount() {
         this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
-            firebase.firestore().doc(`users/${user.uid}`).get().then(snapshot => {
-                this.setState({
-                    activeUserProfile: snapshot.data(),
-                    authEvaluation: user
+            if (user) {
+                firebase.firestore().doc(`users/${user.uid}`).get().then(snapshot => {
+                    this.setState({
+                        activeUserProfile: snapshot.data()
+                    });
                 });
+            }
+            this.setState({
+                authEvaluation: user
             });
         });
     }
