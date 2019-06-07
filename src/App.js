@@ -99,9 +99,6 @@ class App extends Component {
     static theme = createMuiTheme({
         palette: {
             primary
-        },
-        typography: {
-            useNextVariants: true
         }
     });
 }

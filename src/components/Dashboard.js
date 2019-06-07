@@ -77,7 +77,7 @@ class Dashboard extends Component {
         },
         menuButton: {
             marginLeft: -12,
-            marginRight: theme.spacing.unit
+            marginRight: theme.spacing(1)
         },
         toolbar: {
             alignItems: "center",
