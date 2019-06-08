@@ -5,6 +5,7 @@ import {userProfileFields} from "../../settings";
 import Dashboard from "../../components/Dashboard";
 import classNames from "classnames";
 import * as PropTypes from "prop-types";
+import {Link} from "react-router-dom";
 
 class MembersTable extends Component {
     componentDidMount() {
@@ -48,8 +49,11 @@ class MembersTable extends Component {
                 </Fragment>
             )
         } else {
-            return <TableCell className={key === "Name" ? this.props.classes.stickyColumn : ""}
-                              key={field.key}>{user[field.key]}</TableCell>;
+            return <TableCell className={key === "Name" ? this.props.classes.stickyColumn : ""} key={field.key}>
+                {key === "Name"
+                    ? <Link to={`/member/${user.uid}`}>{user[field.key]}</Link>
+                    : user[field.key]}
+            </TableCell>;
         }
     };
 

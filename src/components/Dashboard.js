@@ -1,10 +1,9 @@
 import * as PropTypes from 'prop-types';
-import {ActiveUser, permissionLevels} from "../settings";
-import {AppBar, Toolbar, Typography, Drawer, IconButton, List, ListItem, ListItemText} from '@material-ui/core';
+import {ActiveUser, hasPermissionLevel, routes} from "../settings";
+import {AppBar, Drawer, IconButton, List, ListItem, ListItemText, Toolbar, Typography} from '@material-ui/core';
 import React, {Component, Fragment} from 'react';
 import {Menu} from "@material-ui/icons";
 import {withStyles} from '@material-ui/core/styles';
-import {routes} from "../settings";
 import {withRouter} from "react-router-dom";
 
 class Dashboard extends Component {
@@ -48,7 +47,7 @@ class Dashboard extends Component {
                                         <Typography variant="h5">Member System</Typography>
                                     </ListItemText>
                                 </ListItem>
-                                {Object.values(routes.private).map(route => permissionLevels.indexOf(activeUser["Permission Level"]) > route.minPermissionLevel || "Standard"
+                                {Object.values(routes.private).map(route => hasPermissionLevel(route.minPermissionLevel || "Standard") && route.hidden !== true
                                     ? <ListItem button key={route.path}
                                                 onClick={() => this.props.history.push(route.path)}>
                                         <ListItemText>{route.label}</ListItemText>

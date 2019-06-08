@@ -35,8 +35,14 @@ export const routes = {
             path: "/members",
             resolve: () => import(/* webpackChunkName: "Members" */ "./routes/private/MembersTable").then(getDefaultExport)
         },
+        MEMBER_EDITOR: {
+            hidden: true,
+            path: "/member/:uid",
+            resolve: () => import(/* webpackChunkName: "ProfileEditor" */"./routes/private/ProfileEditor").then(getDefaultExport)
+        },
         PROFILE_EDITOR: {
             label: "Profile Editor",
+            exact: true,
             path: "/",
             resolve: () => import(/* webpackChunkName: "ProfileEditor" */"./routes/private/ProfileEditor").then(getDefaultExport)
         }
@@ -91,6 +97,10 @@ PhoneNumberInput.props = {
 
 const isStudent = profile => profile.Role === "Student";
 
+export const hasPermissionLevel = (minPermissionLevel) => (account) => {
+    return permissionLevels.indexOf(minPermissionLevel) < permissionLevels.indexOf(account["Permission Level"]);
+};
+
 // noinspection JSUnusedGlobalSymbols
 export const userProfileFields = [{
     label: "Name"
@@ -138,6 +148,7 @@ export const userProfileFields = [{
     options: ["Animation", "Design", "Electrical", "Hardware", "Software"],
     type: "select"
 }, {
+    condition: hasPermissionLevel("Mentor"),
     label: "Role",
     options: ["Mentor", "Student", "Other"],
     type: "select"
@@ -147,6 +158,10 @@ export const userProfileFields = [{
 }, {
     condition: isStudent,
     label: "Graduation Year"
+}, {
+    label: "Permission Level",
+    options: permissionLevels,
+    type: "select",
 }, {
     condition: isStudent,
     content: [{

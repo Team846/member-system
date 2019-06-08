@@ -11,6 +11,7 @@ import * as PropTypes from "prop-types";
 
 class ProfileEditor extends Component {
     componentDidMount() {
+        console.debug(this.props);
         this.uid = this.props.match.params.uid || firebase.auth().currentUser.uid;
         this.unsubscribe =
             firebase.firestore().doc(`users/${this.uid}`)

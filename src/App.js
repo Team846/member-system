@@ -32,7 +32,7 @@ class App extends Component {
             if (user) {
                 firebase.firestore().doc(`users/${user.uid}`).get().then(snapshot => {
                     this.setState({
-                        activeUserProfile: snapshot.data()
+                        activeUserProfile: snapshot.data() || this.state.activeUserProfile
                     });
                 });
             }
@@ -53,7 +53,7 @@ class App extends Component {
 
     render() {
         return this.state.authEvaluation !== undefined
-            ? <SnackbarProvider maxStack={3}>
+            ? <SnackbarProvider>
                 <ActiveUser.Provider value={this.state.activeUserProfile}>
                     <CssBaseline/>
                     <MuiThemeProvider theme={App.theme}>
