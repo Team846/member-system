@@ -47,7 +47,7 @@ class Dashboard extends Component {
                                         <Typography variant="h5">Member System</Typography>
                                     </ListItemText>
                                 </ListItem>
-                                {Object.values(routes.private).map(route => hasPermissionLevel(route.minPermissionLevel || "Standard") && route.hidden !== true
+                                {Object.values(routes.private).map(route => hasPermissionLevel(route.minPermissionLevel || "Standard")(activeUser) && route.hidden !== true
                                     ? <ListItem button key={route.path}
                                                 onClick={() => this.props.history.push(route.path)}>
                                         <ListItemText>{route.label}</ListItemText>
