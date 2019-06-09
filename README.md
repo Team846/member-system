@@ -1,5 +1,14 @@
 # Member System [![Build Status](https://travis-ci.com/Team846/member-system.svg?token=Z1FsSPyPy8LSd7ix41p9&branch=master)](https://travis-ci.com/Team846/member-system)
 
+## Information
+This project starts in `index.js`, from where we initialize Firebase and run the initial render of our react app. 
+
+The `App` itself ensures that the user is logged in if they are trying to see a "private page". 
+
+From within the app, the `Dashboard` component offers the user a list of pages that they have sufficient permission to access.
+
+Every route will asynchronously load its corresponding page using Webpack's code splitting feature and the `react-async-component` library.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
