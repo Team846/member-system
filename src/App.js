@@ -9,6 +9,13 @@ import {ActiveUser, permissionLevels, routes} from "./settings";
 import {SnackbarProvider} from "notistack";
 import "firebase/auth";
 
+/**
+ * If the user has logged in to the app, show the route. Otherwise, redirect them to the login page and store their location
+ * @param Component The component parameter that you'd pass to Route
+ * @param props The props you want to provide to the component
+ * @returns {*}
+ * @constructor
+ */
 function PrivateRoute({component: Component, ...props}) {
     return (
         <Route
@@ -27,12 +34,15 @@ function PrivateRoute({component: Component, ...props}) {
 }
 
 class App extends Component {
+    /**
+     * Set up a listener that will re-render the app when auth state changes. It will also start an asynchronous request to get the user's full profile information
+     */
     componentDidMount() {
         this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
             if (user) {
                 firebase.firestore().doc(`users/${user.uid}`).get().then(snapshot => {
                     this.setState({
-                        activeUserProfile: snapshot.data()
+                        activeUserProfile: snapshot.data() || this.state.activeUserProfile
                     });
                 });
             }
@@ -53,7 +63,7 @@ class App extends Component {
 
     render() {
         return this.state.authEvaluation !== undefined
-            ? <SnackbarProvider maxStack={3}>
+            ? <SnackbarProvider>
                 <ActiveUser.Provider value={this.state.activeUserProfile}>
                     <CssBaseline/>
                     <MuiThemeProvider theme={App.theme}>
@@ -99,9 +109,6 @@ class App extends Component {
     static theme = createMuiTheme({
         palette: {
             primary
-        },
-        typography: {
-            useNextVariants: true
         }
     });
 }

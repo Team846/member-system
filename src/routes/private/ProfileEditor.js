@@ -11,6 +11,7 @@ import * as PropTypes from "prop-types";
 
 class ProfileEditor extends Component {
     componentDidMount() {
+        console.debug(this.props);
         this.uid = this.props.match.params.uid || firebase.auth().currentUser.uid;
         this.unsubscribe =
             firebase.firestore().doc(`users/${this.uid}`)
@@ -36,7 +37,7 @@ class ProfileEditor extends Component {
             return (
                 <div key={key}>
                     <Typography variant={"h6"}>{userProfileField.label}</Typography>
-                    <Grid container spacing={8}>
+                    <Grid container spacing={1}>
                         {userProfileField.content
                             .map(inputDescriptor => (
                                 <Grid key={inputDescriptor.key} item xs={12 / userProfileField.content.length}>
@@ -86,7 +87,7 @@ class ProfileEditor extends Component {
             <Dashboard title="Profile Editor">
                 <Grid container justify="center">
                     <Grid item xs={12} md={8} lg={6}>
-                        <Paper className={classes.paper}>
+                        <Paper className={classes.paper} elevation={2}>
                             <form onSubmit={this.updateProfile}>
                                 {userProfileFields.map(this.generateInputFromUserProfileField)}
                                 <Button type="submit">Update my profile</Button>
@@ -117,7 +118,7 @@ class ProfileEditor extends Component {
 
     static styles = theme => ({
         paper: {
-            padding: theme.spacing.unit * 2
+            padding: theme.spacing(2)
         }
     });
 

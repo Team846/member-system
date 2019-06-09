@@ -3,12 +3,12 @@ import React, {Component} from "react";
 import ReactDOM from "react-dom";
 
 class Input extends Component {
-    inputLabelRef = null;
+    inputLabelRef = React.createRef();
 
     componentDidMount() {
-        if (this.inputLabelRef) {
+        if (this.inputLabelRef.current) {
             this.setState({
-                labelWidth: ReactDOM.findDOMNode(this.inputLabelRef).offsetWidth
+                labelWidth: ReactDOM.findDOMNode(this.inputLabelRef.current).offsetWidth
             });
         }
     }
@@ -23,7 +23,7 @@ class Input extends Component {
                     margin="normal"
                     variant="outlined">
                     <InputLabel
-                        ref={ref => this.inputLabelRef = ref}
+                        ref={this.inputLabelRef}
                         variant="outlined">
                         {label}
                     </InputLabel>

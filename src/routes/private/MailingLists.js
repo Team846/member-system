@@ -137,7 +137,7 @@ class MailingLists extends Component {
                     onClose={() => this.setState({modal: {...this.state.modal, open: false}})}>
                     <Grid container alignItems={"center"} justify={"center"}>
                         <Grid item xs={12} md={6}>
-                            <Paper className={classes.modalPaper}>
+                            <Paper className={classes.modalPaper} elevation={2}>
                                 <Typography variant={"h6"}>New Alias</Typography>
                                 <form onSubmit={this.createMailingList}>
                                     <Input autoFocus label={"Name"} onChange={this.modelModalData("name")}
@@ -182,12 +182,12 @@ class MailingLists extends Component {
 
     static styles = theme => ({
         fab: {
-            bottom: theme.spacing.unit * 2,
-            right: theme.spacing.unit * 2,
+            bottom: theme.spacing(2),
+            right: theme.spacing(2),
             position: "fixed",
         },
         modalPaper: {
-            padding: theme.spacing.unit * 2
+            padding: theme.spacing(2)
         }
     });
 
